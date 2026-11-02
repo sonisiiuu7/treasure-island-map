@@ -141,4 +141,4 @@ DE is not a bridge because 3 > 3 is false; D is an articulation because 3 >= 3 i
 
 DFS calculations remain O(V+E); full snapshot creation adds O(number of events * (V+E)) copied data plus sorting/freezing overhead. This is appropriate for the required maximum of 12 nodes and 20 edges.
 
-Phase 4 will select from these immutable snapshots with a cursor. Phase 5 will render the same snapshot and event focus in every panel. Neither phase needs to execute DFS for Step or Run to End.
+Phase 4 now selects from these immutable snapshots with a cursor and retains the complete prepared history. Its reducer/selectors/controller pass 71 new tests. Phase 5 will render the same snapshot and event focus in every panel. Step, Run to End, Reset, and rerenders never execute DFS. See replay-controller.md and phase-4-evidence.md.

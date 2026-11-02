@@ -60,3 +60,17 @@ The implementation kept calculation and replay values in the domain, preserved G
 All 149 original cases were retained, with summary projections and extended mocks preserving their exact numerical assertions. Forty-one new cases check exact traces, proofs, runtime mutation rejection, deterministic histories, and independent per-event transitions over all 75 simple graphs up to four nodes.
 
 The first final build found one unused test type import. It was removed, and the full suite, build, and lint were rerun successfully: 190 tests passed, build passed, lint passed without warnings. See [Phase 3 evidence](phase-3-evidence.md). Replay reducer/controller/UI implementation remains in later phases.
+
+## Phase 4 request and implementation
+
+The actual user request began:
+
+> Complete Phase 4 of my Treasure-Island Bridge Safety Map project.
+
+The full submitted prompt is preserved in [prompts/phase-4-request.md](prompts/phase-4-request.md).
+
+The implementation kept lifecycle state, reducer, and selectors in the application layer and React useReducer/callbacks in the presentation hook. The prepare service is injected through its narrow public method; existing domain algorithms and all 190 prior test assertions were preserved without source changes.
+
+Graph copies protect original/reset data and capture successful values before React queues an action. One immutable ReplayView exposes only the selected snapshot and replayed history. StrictMode does not trigger analysis; only explicit load calls do.
+
+The application gate passed 49 new tests, followed by 22 hook tests using file-scoped jsdom. All 261 tests passed together; build and lint passed without warnings. There were no implementation/test failures during this phase. The actual invalid-coordinate and duplicate-ID recovery checks, batched updates, and repeatability evidence are in [phase-4-evidence.md](phase-4-evidence.md).

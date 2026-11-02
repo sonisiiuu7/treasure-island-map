@@ -7,7 +7,8 @@ classDiagram
     }
     class ReplayController {
         <<useReplayController hook>>
-        +load(graph)
+        +load()
+        +load(input)
         +step()
         +runToEnd()
         +reset()
@@ -31,6 +32,7 @@ classDiagram
     class ReplayState {
         <<discriminated union>>
         +Graph originalDemoGraph
+        +TraversalSnapshot originalSnapshot
         +Graph currentGraph
         +AnalysisResult result
         +number eventIndex
@@ -43,10 +45,15 @@ classDiagram
     }
     class ReplayView {
         <<readonly derived model>>
+        +ReplayStatus status
         +Graph graph
         +TraversalSnapshot snapshot
         +ReplayEvent currentEvent
+        +EventFocus focus
         +ReplayEvent[] history
+        +number eventIndex
+        +ReplayProgress progress
+        +ValidationError[] errors
         +ControlAvailability controls
     }
     class AnalysisResult {

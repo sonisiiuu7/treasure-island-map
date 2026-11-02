@@ -1,6 +1,6 @@
 # Treasure-Island Bridge Safety Map: UML and sequence design
 
-Implementation status: Phases 1 through 3 are complete. AnalysisResult preserves the Phase 2 values through AnalysisSummary and now includes the illustrated immutable replay envelope. Analyzer/service boundaries are unchanged. The reducer/controller/UI portions remain the final architecture for Phases 4 and 5. See event-schema.md and phase-3-evidence.md.
+Implementation status: Phases 1 through 4 are complete. AnalysisResult preserves the calculated values and immutable replay envelope. Pure application replay state/selectors and the injected React hook are implemented; analyzer/service boundaries are unchanged. Page/map components remain Phase 5. See event-schema.md, replay-controller.md, and phase-4-evidence.md.
 
 This design follows the finalized interview plan: React + TypeScript + Vite, Tailwind CSS, native SVG, React useReducer, Vitest, and React Testing Library. Calculation and replay are local.
 
@@ -194,7 +194,8 @@ classDiagram
     }
     class ReplayController {
         <<useReplayController hook>>
-        +load(graph)
+        +load()
+        +load(input)
         +step()
         +runToEnd()
         +reset()
@@ -218,6 +219,7 @@ classDiagram
     class ReplayState {
         <<discriminated union>>
         +Graph originalDemoGraph
+        +TraversalSnapshot originalSnapshot
         +Graph currentGraph
         +AnalysisResult result
         +number eventIndex
@@ -230,10 +232,15 @@ classDiagram
     }
     class ReplayView {
         <<readonly derived model>>
+        +ReplayStatus status
         +Graph graph
         +TraversalSnapshot snapshot
         +ReplayEvent currentEvent
+        +EventFocus focus
         +ReplayEvent[] history
+        +number eventIndex
+        +ReplayProgress progress
+        +ValidationError[] errors
         +ControlAvailability controls
     }
     class AnalysisResult {
@@ -274,9 +281,9 @@ ReplayState is a discriminated union:
 
 Fields shown in UML are conceptual union fields: currentGraph, result, snapshot, and currentEvent are nullable where the status requires. The actual TypeScript union should prevent impossible combinations.
 
-Action payloads are LOAD_SUCCESS(graph, result), LOAD_FAILURE(errors), STEP, RUN_TO_END, and RESET. originalDemoGraph is established once at startup and is preserved across every action, including failed loads.
+Action payloads are LOAD_SUCCESS(graph, result), LOAD_FAILURE(errors), STEP, RUN_TO_END, and RESET. originalDemoGraph and originalSnapshot are captured as independent frozen values at startup and preserved across every action, including failed/custom loads. Initializer/reducer work is pure under StrictMode.
 
-Selectors use result.initialSnapshot at cursor -1, then result.events[cursor].snapshot. EMPTY derives the pre-traversal preview from the original graph; ERROR exposes no traversal snapshot. ReplayView.history contains the already-replayed prefix events.slice(0, eventIndex + 1), so the complete history is available at completion. All visible critical IDs, component count, and table values come from the selected snapshot; final results are never shown early.
+Selectors use result.initialSnapshot at cursor -1, then result.events[cursor].snapshot. EMPTY uses the stored originalSnapshot; ERROR exposes no traversal snapshot. ReplayView.history contains the already-replayed prefix events.slice(0, eventIndex + 1), so the complete history is available at completion. All visible critical IDs, component count, and table values come from the selected snapshot; final results are never shown early.
 
 STEP clamps at the final event. STEP and RUN_TO_END are no-ops in EMPTY and ERROR. RESET restores the original demo, clears prepared history/errors, and returns to EMPTY. Load prepares the next run.
 
@@ -298,7 +305,7 @@ sequenceDiagram
 
     Note over UI,Controller: Startup shows the original demo, unvisited; cursor = -1
     Volunteer->>UI: Load My Archipelago
-    UI->>Controller: load(fresh demo graph)
+    UI->>Controller: load(original or supplied graph)
     Controller->>Service: prepare(graph)
     Service->>Validator: validate(graph)
 
