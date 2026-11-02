@@ -36,9 +36,9 @@ A substitute must preserve traversal order, values, and result semantics; type c
 
 ## Phase 3 extension point
 
-The final UML includes initialSnapshot, events, and finalSnapshot. Phase 2 implements their core calculated outcome as AnalysisResult; Phase 3 adds the replay envelope to the same analyzer/service boundary.
+The final UML includes initialSnapshot, events, and finalSnapshot. Phase 2 implemented their core calculated outcome. Phase 3 has now preserved that core as AnalysisSummary and added the complete replay envelope to AnalysisResult at the same analyzer/service boundary. See event-schema.md and phase-3-evidence.md.
 
-There are no placeholder event arrays or extra DFS runs. The current deterministic visit/return/classification points provide the positions where Phase 3 will emit snapshots. The 149 passing tests protect the existing values when instrumentation is added.
+There are no placeholder event arrays or extra DFS runs. The deterministic visit/return/classification points now emit real events and immutable snapshots. All 149 original tests continue to protect the existing values; the full suite now contains 190 passing tests.
 
 ## Complexity and trust boundaries
 

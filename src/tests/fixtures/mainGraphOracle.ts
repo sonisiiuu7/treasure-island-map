@@ -1,7 +1,7 @@
-import type { AnalysisResult } from '../../domain/models/AnalysisResult'
+import type { AnalysisSummary } from '../../domain/models/AnalysisResult'
 
 /** Hand-derived oracle from docs/reference-graph.md; production never imports this. */
-export const MAIN_GRAPH_ORACLE: AnalysisResult = {
+export const MAIN_GRAPH_ORACLE: AnalysisSummary = {
   nodes: {
     A: { parent: null, discovery: 0, low: 0 },
     B: { parent: 'A', discovery: 1, low: 0 },

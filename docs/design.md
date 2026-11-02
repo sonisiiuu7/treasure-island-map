@@ -1,6 +1,6 @@
 # Treasure-Island Bridge Safety Map: UML and sequence design
 
-Implementation status: Phases 1 and 2 are complete. These diagrams show the final architecture. The current AnalysisResult contains the calculated node table, discovery order, components, tree edges, and sorted critical IDs. Phase 3 adds the illustrated replay envelope and snapshots to the same analyzer/service boundary. See phase-2-design.md and phase-2-evidence.md.
+Implementation status: Phases 1 through 3 are complete. AnalysisResult preserves the Phase 2 values through AnalysisSummary and now includes the illustrated immutable replay envelope. Analyzer/service boundaries are unchanged. The reducer/controller/UI portions remain the final architecture for Phases 4 and 5. See event-schema.md and phase-3-evidence.md.
 
 This design follows the finalized interview plan: React + TypeScript + Vite, Tailwind CSS, native SVG, React useReducer, Vitest, and React Testing Library. Calculation and replay are local.
 
@@ -110,6 +110,16 @@ classDiagram
         +AnalysisService(analyzer)
         +prepare(graph) LoadResult
     }
+    class AnalysisSummary {
+        <<readonly model>>
+        +NodeAnalysisMap nodes
+        +string[] discoveryOrder
+        +string[] componentRoots
+        +number componentCount
+        +string[] treeEdgeIds
+        +string[] bridgeIds
+        +string[] articulationIds
+    }
     class AnalysisResult {
         <<readonly model>>
         +TraversalSnapshot initialSnapshot
@@ -118,6 +128,7 @@ classDiagram
     }
     class ReplayEvent {
         <<discriminated union>>
+        +number index
         +EventType type
         +EventFocus focus
         +string message
@@ -139,6 +150,7 @@ classDiagram
     SortedAdjacencyBuilder ..> Graph : reads validated input
     SortedAdjacencyBuilder ..> AdjacencyIndex : builds sorted index
     GraphAnalyzer <|.. TarjanLowLinkAnalyzer : implements
+    AnalysisSummary <|-- AnalysisResult : extends
     GraphAnalyzer ..> AdjacencyIndex : accepts
     GraphAnalyzer ..> AnalysisResult : returns
     AnalysisService --> GraphAnalyzer : constructor injection
@@ -152,6 +164,8 @@ classDiagram
 
 Supporting type contracts:
 
+- AnalysisSummary holds the original node table, discovery order, component roots/count, tree-edge IDs, and critical IDs. AnalysisResult extends it with the immutable replay envelope.
+
 - Island: readonly id, name, x, y. Bridge: readonly id, source, target. Graph owns readonly node/edge arrays.
 - ValidationResult: a discriminated union of valid and invalid-with-errors. Each ValidationError identifies the affected field and relevant node, edge, or endpoint where applicable.
 - LoadResult: a discriminated union of success(graph, result) and failure(errors).
@@ -160,7 +174,7 @@ Supporting type contracts:
 - NodeStateMap: node ID to { parent, discovery, low, status }. Discovery and low are null until discovery. A discovered component root has parent null. Status is UNVISITED, ACTIVE, or FINISHED.
 - EdgeStateMap: edge ID to UNINSPECTED, TREE, NON_TREE, or BRIDGE. Current focus is an overlay from the selected event; articulation markers come from articulationIds.
 - EventFocus: optional nodeId, edgeId, and related node IDs for the event.
-- EventDetails: a discriminated, typed payload with old/new low values, discovery values, child/root counts, and comparison outcomes as relevant.
+- EventDetails: a discriminated, typed payload with old/new low values, discovery values, child/root counts, and comparison outcomes as relevant. ReplayEvent.index is a zero-based contiguous emission index. The implemented contract is documented in event-schema.md.
 - AnalysisResult.finalSnapshot refers to the final event snapshot. It is a convenience reference, never separate mutable state. Each event owns independent value data; no working DFS maps are shared with snapshots.
 - Bridge and articulation ID arrays use ascending ASCII order. Discovery order is derived from the discovery values.
 

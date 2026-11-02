@@ -45,6 +45,16 @@ classDiagram
         +AnalysisService(analyzer)
         +prepare(graph) LoadResult
     }
+    class AnalysisSummary {
+        <<readonly model>>
+        +NodeAnalysisMap nodes
+        +string[] discoveryOrder
+        +string[] componentRoots
+        +number componentCount
+        +string[] treeEdgeIds
+        +string[] bridgeIds
+        +string[] articulationIds
+    }
     class AnalysisResult {
         <<readonly model>>
         +TraversalSnapshot initialSnapshot
@@ -53,6 +63,7 @@ classDiagram
     }
     class ReplayEvent {
         <<discriminated union>>
+        +number index
         +EventType type
         +EventFocus focus
         +string message
@@ -74,6 +85,7 @@ classDiagram
     SortedAdjacencyBuilder ..> Graph : reads validated input
     SortedAdjacencyBuilder ..> AdjacencyIndex : builds sorted index
     GraphAnalyzer <|.. TarjanLowLinkAnalyzer : implements
+    AnalysisSummary <|-- AnalysisResult : extends
     GraphAnalyzer ..> AdjacencyIndex : accepts
     GraphAnalyzer ..> AnalysisResult : returns
     AnalysisService --> GraphAnalyzer : constructor injection

@@ -5,6 +5,7 @@ import { buildSortedAdjacency } from '../domain/graph/SortedAdjacencyBuilder'
 import type { Graph } from '../domain/models/Graph'
 import { MAIN_GRAPH_ORACLE } from './fixtures/mainGraphOracle'
 import { connectivityOracle } from './helpers/connectivityOracle'
+import { analysisSummary } from './helpers/analysisSummary'
 import {
   adjacencyValues,
   allConnections,
@@ -14,7 +15,7 @@ import {
 } from './helpers/graphFixtures'
 
 function analyze(graph: Graph, analyzer = new TarjanLowLinkAnalyzer()) {
-  return analyzer.analyze(buildSortedAdjacency(graph))
+  return analysisSummary(analyzer.analyze(buildSortedAdjacency(graph)))
 }
 
 describe('TarjanLowLinkAnalyzer: hand-derived and focused results', () => {
@@ -263,7 +264,7 @@ describe('TarjanLowLinkAnalyzer: determinism and state isolation', () => {
     const beforeGraph = structuredClone(graph)
     const index = deepFreeze(buildSortedAdjacency(graph))
     const beforeIndex = adjacencyValues(index)
-    expect(new TarjanLowLinkAnalyzer().analyze(index)).toEqual(MAIN_GRAPH_ORACLE)
+    expect(analysisSummary(new TarjanLowLinkAnalyzer().analyze(index))).toEqual(MAIN_GRAPH_ORACLE)
     expect(graph).toEqual(beforeGraph)
     expect(adjacencyValues(index)).toEqual(beforeIndex)
   })

@@ -46,3 +46,17 @@ The assistant implemented sorted adjacency, the GraphAnalyzer interface, a state
 The implementation brief preserved the same ASCII ordering, global discovery clock, low-link rules, root distinction, original edge IDs, and domain/application boundaries discussed in the design. Replay instrumentation remains Phase 3.
 
 Verification used the hand-derived reference table, focused equality/root/component/permutation tests, and an independent edge/node-removal oracle over all 1,099 small graphs with up to five nodes. All 58 new tests and the full 149-test suite passed; build and lint passed. See [Phase 2 evidence](phase-2-evidence.md).
+
+## Phase 3 request and implementation
+
+The actual user request began:
+
+> Complete Phase 3 of my Treasure-Island Bridge Safety Map project.
+
+The complete submitted prompt is preserved in [prompts/phase-3-request.md](prompts/phase-3-request.md).
+
+The implementation kept calculation and replay values in the domain, preserved GraphAnalyzer and AnalysisService injection, and instrumented the existing DFS. AnalysisSummary keeps all earlier values; AnalysisResult adds initialSnapshot/events/finalSnapshot. Every snapshot owns copied and frozen records/arrays. Event payloads explicitly show negative outcomes and unchanged numerical updates.
+
+All 149 original cases were retained, with summary projections and extended mocks preserving their exact numerical assertions. Forty-one new cases check exact traces, proofs, runtime mutation rejection, deterministic histories, and independent per-event transitions over all 75 simple graphs up to four nodes.
+
+The first final build found one unused test type import. It was removed, and the full suite, build, and lint were rerun successfully: 190 tests passed, build passed, lint passed without warnings. See [Phase 3 evidence](phase-3-evidence.md). Replay reducer/controller/UI implementation remains in later phases.

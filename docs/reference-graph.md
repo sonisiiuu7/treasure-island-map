@@ -70,3 +70,5 @@ Sorted articulation node IDs: C, D, E, G.
 Removing CD, EG, or GH visibly separates a branch. Removing C, D, E, or G separates surviving islands. The triangles provide alternate routes for internal edges.
 
 Phase 2 compared the calculated result with this complete oracle and verified reversed/seeded-shuffled source arrays, endpoint reversal, and coordinate/name independence. All checks passed; see phase-2-evidence.md. This reference remains separate from production decisions.
+
+Phase 3 additionally verified the final snapshot against this table and summaries, the return F -> E low change 4 -> 3, and the DE/D equality distinction in consecutive classification/articulation events. Its 54-event main history is documented in event-schema.md; see phase-3-evidence.md for executed checks.
