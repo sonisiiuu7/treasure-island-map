@@ -77,6 +77,6 @@ sequenceDiagram
 
 Checkout is pinned to a commit; setup-node uses its immutable v7.1.0 release tag. Version references were checked against the official [checkout releases](https://github.com/actions/checkout/releases) and [setup-node releases](https://github.com/actions/setup-node/releases).
 
-The checkout now tracks origin/main in the private [GitHub repository](https://github.com/sonisiiuu7/treasure-island-map). The [first hosted run](https://github.com/sonisiiuu7/treasure-island-map/actions/runs/41504434492) passed locked installation, all 337 tests, production build, and lint on Ubuntu. See [deployment evidence](deployment.md) for the source commit and publication status.
+The checkout now tracks origin/main in the public [GitHub repository](https://github.com/sonisiiuu7/treasure-island-map). The [first hosted run](https://github.com/sonisiiuu7/treasure-island-map/actions/runs/41504434492) passed locked installation, all 337 tests, production build, and lint on Ubuntu. The [live application](https://treasure-island-map.onrender.com/) passed production browser checks. See [deployment evidence](deployment.md) for source commits and results.
 
 [Editable exploration sequence source](diagrams/sequence-exploration.mmd)

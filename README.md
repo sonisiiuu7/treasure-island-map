@@ -2,7 +2,7 @@
 
 A React + TypeScript application that lets a festival volunteer inspect an island network and explain critical bridges and articulation islands using visible DFS evidence.
 
-[Source repository](https://github.com/sonisiiuu7/treasure-island-map) · [Quality checks](https://github.com/sonisiiuu7/treasure-island-map/actions/workflows/quality.yml) · [Deployment record](docs/deployment.md)
+[Live application](https://treasure-island-map.onrender.com/) · [Source repository](https://github.com/sonisiiuu7/treasure-island-map) · [Quality checks](https://github.com/sonisiiuu7/treasure-island-map/actions/workflows/quality.yml) · [Deployment record](docs/deployment.md)
 
 All five phases are complete. The interface includes the responsive native SVG map, Load/Step/Run to End/Reset controls, numerical event explanations, expandable history, traversal table, and safety summary.
 
@@ -18,7 +18,7 @@ npm.cmd ci
 npm.cmd run dev -- --host 127.0.0.1 --port 5175 --strictPort
 ```
 
-Open [the local application](http://127.0.0.1:5175/) after Vite starts. Existing installations can start with the final command. Stop the server with Ctrl+C. The source is also available in the private GitHub repository linked above.
+Open [the local application](http://127.0.0.1:5175/) after Vite starts. Existing installations can start with the final command. Stop the server with Ctrl+C. You can also use the [deployed application](https://treasure-island-map.onrender.com/) without installing anything. The GitHub source repository is public.
 
 Click **Load My Archipelago**, then **Step** for one recorded event or **Run to End** for completion. **Reset** restores the original unvisited network. Expand history to inspect recorded proofs. After completion, **Print summary** opens the browser print dialog for a final safety report or Save as PDF. Steps have gentle visual transitions that respect the system's reduced-motion preference.
 
