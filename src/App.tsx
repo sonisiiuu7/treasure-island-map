@@ -10,6 +10,7 @@ import { EventPanel } from './presentation/components/EventPanel'
 import { EventHistory } from './presentation/components/EventHistory'
 import { NodeTable } from './presentation/components/NodeTable'
 import { SafetySummary } from './presentation/components/SafetySummary'
+import { PrintSafetySummary } from './presentation/components/PrintSafetySummary'
 import './App.css'
 
 interface AppProps {
@@ -71,6 +72,7 @@ export default function App({ analysisService, originalDemoGraph }: AppProps) {
           <EventHistory view={view} />
         </div>
       </div>
+      <PrintSafetySummary view={view} />
     </main>
   )
 }

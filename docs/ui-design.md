@@ -45,3 +45,11 @@ Startup/READY values remain unset. Incomplete empty findings say Not inspected o
 ## Verification boundary
 
 React Testing Library checks accessible names, keyboard controls, SVG state attributes/styles, all 54 synchronized transitions, errors/recovery, repeatability, and selected numerical proof. Real Chrome checks cover the original demo at desktop and mobile sizes; actual screenshots and measurements are in phase-5-evidence.md. The layout does not implement a general collision-solving graph renderer for arbitrary custom coordinates.
+
+## Optional animation and print presentation
+
+Event entry fades/moves slightly over 220 ms; focus strokes settle over 320 ms. Short color transitions accompany map state changes. These are CSS effects with no timers, DFS calls, or cursor changes. The event live region stays mounted. Reduced-motion and print media disable animations.
+
+SafetySummary provides Print summary, enabled only at completion. App also composes PrintSafetySummary with the same ReplayView. Its inline screen-hidden style keeps it out of the visible page; print CSS exposes it and hides the interactive dashboard. Final reports include sorted IDs, every recorded critical-item proof, and the final node table. Before completion or after failure/Reset it renders an incomplete notice without stale findings. Browser print/Save as PDF uses A4 styling; the original demo fits one page.
+
+See [reliability and optional-feature evidence](reliability-and-optionals.md) for actual checks and captures.

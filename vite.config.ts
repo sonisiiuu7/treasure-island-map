@@ -8,5 +8,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/tests/**/*.test.{ts,tsx}'],
+    // Bound concurrent jsdom/transform startup on laptops; retain test isolation
+    // and the default five-second timeout outside the two full-replay cases.
+    maxWorkers: 2,
   },
 })

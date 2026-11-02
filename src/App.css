@@ -198,3 +198,51 @@ progress::-moz-progress-bar { background: #4c8371; border-radius: 10px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Motion is presentation only: it never schedules or advances replay. */
+@keyframes replay-reveal {
+  from { opacity: .65; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes focus-settle {
+  from { stroke-opacity: .2; }
+  to { stroke-opacity: 1; }
+}
+.replay-event-enter { animation: replay-reveal 220ms ease-out; }
+.current-node-ring, .current-edge-halo { animation: focus-settle 320ms ease-out; }
+.connection-line { transition: stroke 180ms ease-out; }
+.island-marker { transition: fill 180ms ease-out, stroke 180ms ease-out; }
+.summary-actions { display: flex; align-items: center; gap: 8px; }
+.print-button { border: 1px solid #c8d5ca; border-radius: 5px; background: #f8faf4; color: #315d50; font-size: 10px; padding: 4px 7px; }
+.print-button:not(:disabled):hover { background: #eaf1e8; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; }
+}
+@page { size: A4; margin: 12mm; }
+@media print {
+  *, *::before, *::after { animation: none !important; transition: none !important; box-shadow: none !important; }
+  :root { background: #fff !important; }
+  body { min-width: 0; color: #111; background: #fff; }
+  .app-shell { max-width: none; padding: 0; margin: 0; }
+  .app-shell > :not(.print-report) { display: none !important; }
+  .print-report { display: block !important; font: 10pt/1.4 Arial, sans-serif; color: #111; }
+  .print-report-heading { border-bottom: 2px solid #222; padding-bottom: 7px; margin-bottom: 8px; }
+  .print-report-heading p { font-size: 9pt; }
+  .print-report h1 { color: #111; font: bold 22pt/1.2 Arial, sans-serif; letter-spacing: -.025em; margin-top: 4px; }
+  .print-report h2 { color: #111; font: bold 12pt/1.3 Arial, sans-serif; margin: 13px 0 7px; }
+  .print-subtitle { font-size: 9pt; }
+  .print-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-bottom: 1px solid #aaa; padding: 10px 0; margin: 0; }
+  .print-totals dt { font-size: 9pt; }
+  .print-totals dd { margin: 3px 0 0; font-size: 12pt; font-weight: bold; }
+  .print-proof-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; list-style: none; padding: 0; }
+  .print-proof-grid li { border: 1px solid #aaa; border-radius: 4px; padding: 8px; break-inside: avoid; }
+  .print-report .proof-label, .print-report .proof-explanation { font-size: 8pt; color: #222; }
+  .print-report .proof-formula { font-size: 11pt; color: #111; }
+  .print-report table { border-collapse: collapse; width: 100%; font-size: 9pt; }
+  .print-report thead { display: table-header-group; }
+  .print-report th, .print-report td { padding: 5px 7px; border-bottom: 1px solid #ccc; text-align: left; }
+  .print-report tr { break-inside: avoid; }
+  .print-report footer { margin-top: 12px; border-top: 1px solid #aaa; padding-top: 7px; font-size: 8pt; }
+  .print-report footer p + p { margin-top: 4px; }
+  .print-notice { margin-top: 18px; }
+}

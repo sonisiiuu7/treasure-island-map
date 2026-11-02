@@ -70,6 +70,10 @@ All five planned implementation phases are complete. GitHub publication and depl
 
 The [engineering prompts](prompts/engineering-prompts.md) describe the layer boundaries, algorithm rules, ownership decisions, and verification tasks. The [development notes](ai-prompts.md) record actual issues and results, and the [discussion guide](interview-discussion.md) covers the design questions.
 
-The counts above are checkpoint results. Current verification has an open five-second timeout in the 54-event integration test, reproduced in isolation. A diagnostic run with --testTimeout=15000 --maxWorkers=1 passed all 293 tests; build/lint passed. The normal-command reliability repair remains open.
+The counts above are historical checkpoint results. The reliability follow-up now passes 303 tests in 13 files with the normal command, repeated twice. It retains all 54-event assertions, uses cached/scoped queries and two workers, and assigns 20 seconds only to the two exhaustive full-replay cases. Other tests keep the default five seconds. Build and lint pass.
 
 The history-type filter is a proposed extension. It has not been implemented.
+
+## Optional requirements complete
+
+Gentle presentation-only replay animation and the printable safety summary are implemented. Motion respects reduced-motion settings. Printing consumes the completed selected view and leaves the event model, cursor, and analysis untouched. Ten new tests cover report content, incomplete/error/Reset clearing, alternate graphs, printing actions, keyboard operation, and animation/live-region behavior. See [the actual verification record](reliability-and-optionals.md).

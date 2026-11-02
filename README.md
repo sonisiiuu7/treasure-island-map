@@ -18,7 +18,7 @@ npm.cmd run dev -- --host 127.0.0.1 --port 5175 --strictPort
 
 Open [the local application](http://127.0.0.1:5175/) after Vite starts. Existing installations can start with the final command. Stop the server with Ctrl+C. The verification server is stopped after the checks; this project is local and has not been published.
 
-Click **Load My Archipelago**, then **Step** for one recorded event or **Run to End** for the completed inspection. **Reset** restores the original unvisited network. Expand an entry in Inspection history to read its recorded proof.
+Click **Load My Archipelago**, then **Step** for one recorded event or **Run to End** for completion. **Reset** restores the original unvisited network. Expand history to inspect recorded proofs. After completion, **Print summary** opens the browser print dialog for a final safety report or Save as PDF. Steps have gentle visual transitions that respect the system's reduced-motion preference.
 
 ## Verification
 
@@ -28,11 +28,13 @@ npm.cmd run build
 npm.cmd run lint
 ```
 
-The Phase 5 checkpoint passed **293 tests in 12 files**, production build, and lint. This includes all 261 previous tests and 32 new component/application cases. Actual Chrome checks covered 1366 × 768 desktop and 390 × 844 mobile emulation, keyboard Step, the three required numerical proofs, completion, and Reset.
+The current gate passed **303 tests in 13 files**, production build, and lint. The normal `npm.cmd run test:run` command passed twice consecutively (50.40 s and 43.52 s) without diagnostic flags.
 
-A subsequent audit reproduced a five-second timeout in the 54-event integration test. All 293 tests passed with a diagnostic 15-second timeout and one worker; build/lint passed. A permanent fix for the normal test command remains pending. See the current qualification in [development notes](docs/ai-prompts.md#verification-and-current-limitations).
+The 54-event tests retain all assertions. Cached/scoped queries avoid repeated full-page accessibility searches; two-worker execution limits contention; only the two exhaustive full-replay tests have a 20-second budget. Other tests keep the five-second default.
 
-See [Phase 5 evidence](docs/phase-5-evidence.md), [browser measurements](docs/browser-check-results.json), and the [interview walkthrough](docs/demo-walkthrough.md). Cross-browser, physical-phone, and screen-reader testing were not performed.
+Both optional requirements are implemented: gentle replay animation and a printable safety summary. Real Chrome checks cover desktop/mobile layout, reduced motion, unchanged replay during printing, seven critical-item proofs, eight final table rows, and a one-page A4 output.
+
+See [reliability and optional-feature evidence](docs/reliability-and-optionals.md), [browser results](docs/optional-browser-results.json), and the [demo walkthrough](docs/demo-walkthrough.md). Browser coverage uses Chrome and mobile emulation; physical-device, cross-browser, screen-reader, and physical-printer checks were not performed.
 
 ## Architecture
 
@@ -67,6 +69,7 @@ The engine accepts 1..12 nodes and 0..20 undirected edges, including disconnecte
 - [Event schema and emission rules](docs/event-schema.md)
 - [Replay/controller contract](docs/replay-controller.md)
 - [Presentation design and accessibility](docs/ui-design.md)
+- [Reliability fix and optional-feature evidence](docs/reliability-and-optionals.md)
 - [Development notes and AI use](docs/ai-prompts.md)
 - [Engineering prompt collection](docs/prompts/engineering-prompts.md)
 - [Interview discussion and follow-up questions](docs/interview-discussion.md)

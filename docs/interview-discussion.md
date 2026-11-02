@@ -64,7 +64,7 @@ Recompute the [reference table](reference-graph.md) yourself, especially F → E
 
 **Did AI assistance introduce any problems?** The recorded iterations include an unused type import, accessible-name defects, and browser layout collisions. Their corrections and verification are documented. The strict/equality rules are correctness risks covered by focused tests; the issue log lists the defects actually observed.
 
-**What is still unresolved?** The later audit reproduced a five-second timeout in the 54-event integration test. All 293 cases passed with a 15-second limit and one worker, while build/lint passed. The default command still needs a permanent reliability fix. Report that qualification rather than substituting the historical checkpoint result.
+**How was the timeout resolved?** Repeated full-page role/name queries were expensive as history grew. Containers are now resolved once and assertions are scoped. Two workers limit contention; only the two exhaustive full-replay cases receive a bounded 20-second budget. All assertions remain. The normal command passed 303 tests twice, followed by successful build/lint. See [the repair evidence](reliability-and-optionals.md).
 
 **What was your contribution versus AI's?** Explain the workflow: requirements and constraints were supplied through the conversation; AI assisted the technical specification, implementation, tests, documentation, and troubleshooting. Discuss how the results were checked using the reference graph, independent oracle, regression assertions, and browser evidence.
 
@@ -75,7 +75,7 @@ Recompute the [reference table](reference-graph.md) yourself, especially F → E
 | Problem, plan, and constraints | 2 minutes | Five checkpoints, main graph, bounded local engine. |
 | Working demo and mathematical proof | 4 minutes | Startup, Load, Step, FE at 21, DE at 39, D at 40, completion/history/Reset. |
 | LLD, ownership, and trade-offs | 3 minutes | Dependency direction, Strategy, reducer, one view, snapshot cost. |
-| AI decisions, iterations, and verification | 2 minutes | Phase constraints; independent oracle; actual corrections and current timeout qualification. |
+| AI decisions, iterations, and verification | 2 minutes | Phase constraints; independent oracle; actual corrections and the scoped timeout repair. |
 
 This leaves the rest of a 30–40 minute session for discussion and requested modifications. Keep the presentation selective rather than reading every document or prompt aloud.
 
@@ -86,3 +86,5 @@ Practice the proposed history-type filter from the prompt collection on a separa
 The candidate should be able to identify the correct layer before asking AI for code, review the generated diff, and explain the effect of each change. A practiced example helps establish the workflow but does not predict the interviewer's requested modification.
 
 For launch commands and the exact event walkthrough, use [the demo guide](demo-walkthrough.md).
+
+**How do optional features preserve correctness?** Motion is CSS-only and respects reduced motion. PrintSafetySummary reads the completed ReplayView and recorded classification events; printing never dispatches a replay action or calls analysis. Its incomplete/error notice and report-clearing tests prevent stale or premature findings.

@@ -15,7 +15,10 @@ export function SafetySummary({ view }: { view: ReplayView }) {
     <section className="panel summary-panel" aria-labelledby="summary-title">
       <div className="panel-heading">
         <h2 id="summary-title">Safety findings</h2>
-        <span className={`summary-stage ${complete ? 'is-final' : ''}`}>{view.status === 'ERROR' ? 'Unavailable' : complete ? 'Final' : 'Provisional'}</span>
+        <div className="summary-actions">
+          <button type="button" className="print-button" disabled={!complete} onClick={() => window.print()}>Print summary</button>
+          <span className={`summary-stage ${complete ? 'is-final' : ''}`}>{view.status === 'ERROR' ? 'Unavailable' : complete ? 'Final' : 'Provisional'}</span>
+        </div>
       </div>
       {!snapshot ? <p className="empty-note">Findings unavailable. Resolve the map errors and load again.</p> : (
         <div className="summary-content">

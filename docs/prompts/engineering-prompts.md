@@ -182,7 +182,7 @@ and any limitations, then update the documentation and save a checkpoint.
 
 ## Verification review
 
-Open task: investigate the default timeout in the 54-event integration test.
+Completed review: query scoping, two-worker execution, and bounded per-test budgets preserve every assertion. The normal command passes 303 tests. See [verification evidence](../reliability-and-optionals.md).
 
 ```text
 The all-events App test is exceeding its five-second limit. It happened in

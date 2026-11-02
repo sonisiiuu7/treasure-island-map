@@ -25,13 +25,16 @@ function load() { fireEvent.click(screen.getByRole('button', { name: 'Load My Ar
 function step() { fireEvent.click(screen.getByRole('button', { name: 'Step' })) }
 function run() { fireEvent.click(screen.getByRole('button', { name: 'Run to End' })) }
 function reset() { fireEvent.click(screen.getByRole('button', { name: 'Reset' })) }
-function rows() {
-  const table = screen.getByRole('table', { name: 'Island traversal values' }) as HTMLTableElement
+function rows(table = screen.getByRole('table', { name: 'Island traversal values' }) as HTMLTableElement) {
   return [...table.rows].slice(1).map((row) => [...row.cells].map((cell) => cell.textContent))
 }
 function chips(testId: string) {
   return [...screen.getByTestId(testId).querySelectorAll('.finding-chip')].map((chip) => chip.textContent)
 }
+
+// These two integration cases render all 54 events. Keep a bounded budget
+// for slower laptops while retaining every assertion; other tests use 5 s.
+const FULL_REPLAY_TIMEOUT = 20_000
 
 describe('App: complete inspection workflow', () => {
   it('shows the original unvisited map and accessible startup controls without analysis', () => {
@@ -74,41 +77,49 @@ describe('App: complete inspection workflow', () => {
     load()
     const seen = new Set<string>()
     const stateLabels = { UNVISITED: 'Unvisited', ACTIVE: 'Active', FINISHED: 'Finished' }
+    // Resolve accessible containers once. Repeating whole-page role/name queries
+    // across an ever-growing history made this test CPU-bound in jsdom.
+    const stepButton = screen.getByRole('button', { name: 'Step' })
+    const panel = screen.getByRole('region', { name: 'Current inspection event' })
+    const table = screen.getByRole('table', { name: 'Island traversal values' }) as HTMLTableElement
+    const map = screen.getByTestId('map-landscape')
+    const bridges = screen.getByTestId('critical-bridges')
+    const articulations = screen.getByTestId('articulation-islands')
+    const count = screen.getByTestId('component-count')
+    const history = screen.getByRole('region', { name: 'Inspection history' })
     for (const event of expected) {
-      step()
-      const panel = screen.getByRole('region', { name: 'Current inspection event' })
+      fireEvent.click(stepButton)
       expect(panel).toHaveAttribute('data-event-index', String(event.index))
       expect(panel).toHaveAttribute('data-event-type', event.type)
-      expect(rows().map((row) => [row[0], row[2], row[3], row[4], row[5]])).toEqual(
+      expect(rows(table).map((row) => [row[0], row[2], row[3], row[4], row[5]])).toEqual(
         Object.entries(event.snapshot.nodes).map(([id, node]) => [
           id, node.parent ?? '—', node.discovery === null ? '—' : String(node.discovery),
           node.low === null ? '—' : String(node.low), stateLabels[node.status],
         ]),
       )
-      const map = screen.getByTestId('map-landscape')
       expect(map.querySelector('.map-node[data-current="true"]')).toHaveAttribute('data-testid', `island-${event.focus.nodeId}`)
       expect(Object.fromEntries([...map.querySelectorAll('.map-edge')].map((edge) => [
         edge.getAttribute('data-testid')!.replace('bridge-', ''), edge.getAttribute('data-state'),
       ]))).toEqual(event.snapshot.edges)
-      expect(chips('critical-bridges')).toEqual(event.snapshot.bridgeIds)
-      expect(chips('articulation-islands')).toEqual(event.snapshot.articulationIds)
-      expect(screen.getByTestId('component-count')).toHaveTextContent(String(event.snapshot.componentCount))
-      expect(screen.getByRole('list', { name: 'Replayed inspection events' }).children).toHaveLength(event.index + 1)
+      expect([...bridges.querySelectorAll('.finding-chip')].map((chip) => chip.textContent)).toEqual(event.snapshot.bridgeIds)
+      expect([...articulations.querySelectorAll('.finding-chip')].map((chip) => chip.textContent)).toEqual(event.snapshot.articulationIds)
+      expect(count).toHaveTextContent(String(event.snapshot.componentCount))
+      expect(history.querySelectorAll('.history-list > li')).toHaveLength(event.index + 1)
 
       if (event.type === 'RETURN_CHILD' && event.details.nodeId === 'E' && event.details.childId === 'F') {
         expect(within(panel).getByText('4 → 3')).toBeInTheDocument()
-        expect(rows().find((row) => row[0] === 'E')?.[4]).toBe('3')
+        expect(rows(table).find((row) => row[0] === 'E')?.[4]).toBe('3')
         seen.add('FE')
       }
       if (event.type === 'CLASSIFY_EDGE' && event.details.edgeId === 'DE') {
         expect(within(panel).getByText('3 > 3 = false')).toBeInTheDocument()
-        expect(within(map).getByTestId('bridge-DE')).toHaveAttribute('data-state', 'TREE')
-        expect(within(map).getByTestId('island-D')).toHaveAttribute('data-articulation', 'false')
+        expect(map.querySelector('[data-testid="bridge-DE"]')).toHaveAttribute('data-state', 'TREE')
+        expect(map.querySelector('[data-testid="island-D"]')).toHaveAttribute('data-articulation', 'false')
         seen.add('DE')
       }
       if (event.type === 'ARTICULATION' && event.details.nodeId === 'D') {
         expect(within(panel).getByText('3 ≥ 3 = true')).toBeInTheDocument()
-        expect(within(map).getByTestId('island-D')).toHaveAttribute('data-articulation', 'true')
+        expect(map.querySelector('[data-testid="island-D"]')).toHaveAttribute('data-articulation', 'true')
         seen.add('D')
       }
     }
@@ -116,7 +127,7 @@ describe('App: complete inspection workflow', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Inspection complete')
     expect(prepare).toHaveBeenCalledTimes(1)
     expect(analyze).toHaveBeenCalledTimes(1)
-  })
+  }, FULL_REPLAY_TIMEOUT)
 
   it('runs from a partial inspection to the final reference table, findings, and retained history', () => {
     const { prepare, analyze } = setup()
@@ -164,7 +175,8 @@ describe('App: complete inspection workflow', () => {
   it('reproduces identical visible histories, table values, and findings for stepped and complete runs', () => {
     const { analyze } = setup()
     load()
-    for (let index = 0; index < 54; index++) step()
+    const stepButton = screen.getByRole('button', { name: 'Step' })
+    for (let index = 0; index < 54; index++) fireEvent.click(stepButton)
     const history = screen.getByRole('list', { name: 'Replayed inspection events' }).textContent
     const table = rows()
     const findings = screen.getByRole('region', { name: 'Safety findings' }).textContent
@@ -175,7 +187,7 @@ describe('App: complete inspection workflow', () => {
     expect(rows()).toEqual(table)
     expect(screen.getByRole('region', { name: 'Safety findings' }).textContent).toBe(findings)
     expect(analyze).toHaveBeenCalledTimes(2)
-  })
+  }, FULL_REPLAY_TIMEOUT)
 
   it('supports keyboard Load, Step, Run, and Reset with native buttons', async () => {
     setup()
@@ -207,6 +219,51 @@ describe('App: complete inspection workflow', () => {
     step()
     run()
     reset()
+    expect(analyze).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('App: printable summary', () => {
+  it('enables printing only at completion and prints without changing history or invoking analysis', () => {
+    const print = vi.spyOn(window, 'print').mockImplementation(() => {})
+    const { prepare, analyze } = setup()
+    const printButton = screen.getByRole('button', { name: 'Print summary' })
+    expect(printButton).toBeDisabled()
+    load()
+    expect(printButton).toBeDisabled()
+    step()
+    expect(printButton).toBeDisabled()
+    run()
+    const history = screen.getByRole('list', { name: 'Replayed inspection events' }).textContent
+    const table = rows()
+    expect(printButton).toBeEnabled()
+    fireEvent.click(printButton)
+    expect(print).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('list', { name: 'Replayed inspection events' }).textContent).toBe(history)
+    expect(rows()).toEqual(table)
+    expect(screen.getByText('Event 54 / 54')).toBeInTheDocument()
+    expect(prepare).toHaveBeenCalledTimes(1)
+    expect(analyze).toHaveBeenCalledTimes(1)
+    reset()
+    expect(printButton).toBeDisabled()
+    expect(screen.getByTestId('print-report').querySelector('table')).not.toBeInTheDocument()
+  })
+
+  it('supports keyboard printing and clears printable output after an invalid load', async () => {
+    const print = vi.spyOn(window, 'print').mockImplementation(() => {})
+    const { prepare, analyze } = setup()
+    load()
+    run()
+    const printButton = screen.getByRole('button', { name: 'Print summary' })
+    printButton.focus()
+    await userEvent.setup().keyboard('{Enter}')
+    expect(print).toHaveBeenCalledTimes(1)
+    const invalid = new AnalysisService(new TarjanLowLinkAnalyzer()).prepare(null)
+    prepare.mockReturnValueOnce(invalid)
+    load()
+    expect(printButton).toBeDisabled()
+    expect(screen.getByTestId('print-report')).toHaveTextContent('Final report unavailable')
+    expect(screen.getByTestId('print-report').querySelector('table')).not.toBeInTheDocument()
     expect(analyze).toHaveBeenCalledTimes(1)
   })
 })

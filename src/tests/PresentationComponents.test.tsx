@@ -143,6 +143,20 @@ describe('NodeTable', () => {
 })
 
 describe('EventPanel', () => {
+  it('restarts only the visual event entry while preserving the live region and selected event', () => {
+    const first = viewAt(event => event.type === 'COMPONENT_START')
+    const next = viewAt(event => event.type === 'DISCOVER' && event.details.nodeId === 'A')
+    const { container, rerender } = render(<EventPanel view={first} />)
+    const live = container.querySelector('[aria-live="polite"]')
+    const animated = live?.querySelector('.replay-event-enter')
+    expect(animated).toBeInTheDocument()
+    rerender(<EventPanel view={next} />)
+    expect(container.querySelector('[aria-live="polite"]')).toBe(live)
+    expect(live?.querySelector('.replay-event-enter')).not.toBe(animated)
+    expect(screen.getByRole('region', { name: 'Current inspection event' })).toHaveAttribute('data-event-index', String(next.eventIndex))
+    expect(screen.getByText('discovery = low = 0')).toBeInTheDocument()
+  })
+
   it('explains startup and READY before any event is selected', () => {
     const { rerender } = render(<EventPanel view={initialView()} />)
     expect(screen.getByText('Your inspection starts here')).toBeInTheDocument()

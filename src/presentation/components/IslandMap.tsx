@@ -98,7 +98,7 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
             data-testid={`bridge-${edge.id}`} data-state={state} data-current={current}
             aria-label={`Bridge ${edge.id}: ${edgeLabels[state]}${current ? '; current' : ''}`}>
             <title>{`Bridge ${edge.id}: ${edgeLabels[state]}${current ? '; current inspection' : ''}`}</title>
-            {current && <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} className="current-edge-halo" />}
+            {current && <line key={view.eventIndex} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className="current-edge-halo" />}
             <line data-role="connection" x1={a.x} y1={a.y} x2={b.x} y2={b.y}
               strokeDasharray={edgeDash[state]} className="connection-line" />
             <g className="bridge-label" transform={`translate(${labelX} ${labelY})`}>
@@ -123,7 +123,7 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
             <title>{`${node.id} · ${node.name}. ${state.status.toLowerCase()}. Discovery ${state.discovery ?? 'unset'}, low ${state.low ?? 'unset'}.${articulation ? ' Articulation island.' : ''}${current ? ' Current focus.' : ''}`}</title>
             <ellipse cx={p.x + 1} cy={p.y + 3} rx="28" ry="20" className="island-shore" />
             <ellipse cx={p.x} cy={p.y} rx="23" ry="16" className="island-land" />
-            {current && <circle cx={p.x} cy={p.y} r="30" className="current-node-ring" />}
+            {current && <circle key={view.eventIndex} cx={p.x} cy={p.y} r="30" className="current-node-ring" />}
             {articulation && <circle cx={p.x} cy={p.y} r="20" className="articulation-ring" />}
             <circle cx={p.x} cy={p.y} r="14" className="island-marker" />
             <text x={p.x} y={p.y + 5} textAnchor="middle" className="island-id">{node.id}</text>

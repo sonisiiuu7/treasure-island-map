@@ -22,7 +22,7 @@ The main controls on AI-generated code were explicit algorithm rules, a separate
 | 4 | Pure reducer/selectors and React controller | [261 total tests](phase-4-evidence.md) |
 | 5 | SVG map, controls, numerical explanations, history, table, summary | [293 total tests and browser evidence](phase-5-evidence.md) |
 
-These are checkpoint results. The current test-timeout issue is recorded below.
+These are checkpoint results. The reliability follow-up adds 10 tests (303 total) and both optional features; see [the follow-up evidence](reliability-and-optionals.md).
 
 ## Design decisions
 
@@ -49,7 +49,7 @@ See [the design and diagrams](design.md) and [the replay contract](replay-contro
 | SVG and page heading names did not match the intended accessible names. | Separate SVG title/description associations and provide the intended heading name. | Focused accessibility tests passed; see [Phase 5 evidence](phase-5-evidence.md). |
 | The table extended beyond the laptop viewport and some map labels collided. | Tighten spacing and adjust display projection, name placement, and bridge-label offsets. | Refreshed [browser measurements](browser-check-results.json) show the main panels fitting and no measured label text overlaps at the tested sizes. |
 | Set-Location failed in Command Prompt. | Use cd /d in Command Prompt; reserve Set-Location for PowerShell. | Both shell instructions appear in the [demo guide](demo-walkthrough.md). |
-| The 54-event integration test exceeded its default five-second timeout. | Reproduce it alone and run a diagnostic check with a larger timeout and one worker. | Default-command reliability remains open. Diagnostic settings passed all 293 tests. |
+| The 54-event integration test exceeded its five-second timeout. | Cache/scoped DOM queries, limit workers to two, and give only the two exhaustive full-replay cases a bounded 20-second budget. | All assertions retained. The normal command passed all 303 tests twice; see [evidence](reliability-and-optionals.md). |
 
 ## Algorithm risks checked explicitly
 
@@ -74,8 +74,14 @@ The timeout investigation recorded 292 passes and one timeout with the normal su
 npm.cmd run test:run -- --testTimeout=15000 --maxWorkers=1
 ```
 
-Build and lint passed. The default test-budget repair remains pending; the diagnostic command does not resolve it.
+The permanent follow-up retains all assertions, removes repeated whole-page role queries, caps workers at two, and scopes a 20-second budget to the two exhaustive 54-step tests. All other tests retain the five-second default. The normal command passed 303 tests twice (50.40 s and 43.52 s); build and lint passed. The diagnostic command above records the investigation, not the current launch requirement.
 
 Browser evidence covers Chrome at 1366 × 768 and mobile viewport emulation at 390 × 844. It does not establish physical-device, cross-browser, screen-reader, or arbitrary-coordinate label-collision coverage.
 
-The [verification prompt](prompts/engineering-prompts.md#verification-review) describes the open repair. The [history-filter prompt](prompts/engineering-prompts.md#history-filter-extension) describes a possible extension; that feature is not implemented.
+The [verification prompt](prompts/engineering-prompts.md#verification-review) describes the investigation; its completed repair is documented in [the follow-up evidence](reliability-and-optionals.md). The [history-filter prompt](prompts/engineering-prompts.md#history-filter-extension) describes a possible extension; that feature is not implemented.
+
+## Optional features
+
+Replay now uses brief event/focus transitions without timers or automatic cursor advancement. Reduced-motion settings disable them. The live announcement region stays mounted as its animated content changes.
+
+Print summary is enabled only after completion. A print-only component reads the same selected ReplayView and recorded proofs. It includes component count, sorted critical IDs, all bridge/articulation proofs, and the final node table. Printing does not call analysis or move the cursor. Reset/failure clears the report; direct printing before completion shows an incomplete notice. Browser checks produced one A4 page for the demo.

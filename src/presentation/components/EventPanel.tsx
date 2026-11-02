@@ -15,11 +15,11 @@ export function EventPanel({ view }: { view: ReplayView }) {
       </div>
       <div className="event-content" aria-live="polite" aria-atomic="true">
         {event ? (
-          <>
+          <div key={event.index} className="replay-event-enter">
             <h3>{eventTitles[event.type]}</h3>
             <EventProof event={event} />
             <p className="event-message">{event.message}</p>
-          </>
+          </div>
         ) : (
           <div className="event-welcome">
             <span className="welcome-symbol" aria-hidden="true">⌁</span>
