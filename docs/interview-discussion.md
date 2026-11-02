@@ -88,3 +88,9 @@ The candidate should be able to identify the correct layer before asking AI for 
 For launch commands and the exact event walkthrough, use [the demo guide](demo-walkthrough.md).
 
 **How do optional features preserve correctness?** Motion is CSS-only and respects reduced motion. PrintSafetySummary reads the completed ReplayView and recorded classification events; printing never dispatches a replay action or calls analysis. Its incomplete/error notice and report-clearing tests prevent stale or premature findings.
+
+## Implemented exploration examples
+
+The repository now includes the cycle/root/disconnected examples, a single-closure connectivity tool, clickable reached proofs, and a CI workflow. Use [the updated demonstration](demo-walkthrough.md#additional-two-minute-demonstration) and [verification](exploration-evidence.md): 337 tests in 17 files pass, together with build and lint. CI is configured locally; a hosted run is pending the first GitHub push because no remote is set.
+
+For a live extension discussion, explain why closing DE leaves one component but does not mean its surviving graph has the same critical edges: the overlay intentionally compares connectivity while retaining original Tarjan classifications. Reclassifying the surviving graph would be a distinct, explicitly labeled analysis.

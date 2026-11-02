@@ -17,7 +17,7 @@ For Windows Command Prompt, replace Set-Location with:
 cd /d "C:\Users\UDAY\Documents\Codex\2026-11-02\x20\outputs\treasure-island-map"
 ```
 
-Run verification commands sequentially. The normal test command now passes 303 cases in 13 files; no diagnostic flags are needed. Two exhaustive full-replay tests have a bounded 20-second budget, while all others keep the default five seconds.
+Run verification commands sequentially. The normal test command now passes 337 cases in 17 files; no diagnostic flags are needed. Two exhaustive full-replay tests have a bounded 20-second budget, while all others keep the default five seconds.
 
 Open [http://127.0.0.1:5175/](http://127.0.0.1:5175/). The dev server runs until Ctrl+C. Dependencies are already installed in this checkout; npm.cmd ci is for a clean installation.
 
@@ -41,7 +41,7 @@ Use Tab to move between native controls; Enter activates a focused button and Sp
 - Domain: validation, deterministic DFS, typed event payloads, and independent deeply frozen snapshots.
 - Application: AnalysisService receives the GraphAnalyzer Strategy; reducer/selectors manage replay without running DFS.
 - Presentation: the hook connects callbacks to React; all components consume one selected ReplayView.
-- Correctness: the 303 cases include an independent removal-based oracle over 1,099 small graphs and per-event transition checks over 75 small graphs. Explain the scoped query/worker/budget repair using reliability-and-optionals.md.
+- Correctness: the 337 cases retain the independent removal-based oracle over 1,099 small graphs and event-transition checks over 75 small graphs, and add closure/proof/example tests. Explain the scoped query/worker/budget repair using reliability-and-optionals.md.
 - Testing boundaries: invalid-coordinate and duplicate-ID failures are injected in integration tests, verifying stale content clears and valid loads recover. Testing controls are not part of the volunteer interface.
 - Complexity: the DFS core is O(V+E); sorting and copying full event snapshots add documented overhead, appropriate for at most 12 nodes and 20 edges.
 
@@ -56,3 +56,15 @@ One possible live change is the event-type history filter described in the promp
 See [Phase 5 evidence](phase-5-evidence.md) for the executed checks and screenshots. The browser evidence uses Chrome with mobile viewport emulation; no physical-phone or cross-browser verification is claimed.
 
 Optional replay motion is a brief visual transition after a manual action. It never advances the cursor automatically. The operating system's reduced-motion setting disables it. Print summary becomes available at completion and uses recorded snapshot/proof data.
+
+## Additional two-minute demonstration
+
+1. Load the cycle-only example and Run to End: no critical items.
+2. Load the branching-root example: explain A's recorded 2 ≥ 2 root-child proof.
+3. Load the disconnected/isolated example: show three component roots and the continuing clock.
+4. Load My Archipelago and Run to End. Click articulation D to show 3 ≥ 3 = true and recorded event 40 without moving event 54.
+5. Open What-if closure. Close CD (two components), DE (one), then D (two). Read the component lists; press Escape to see the full map overlay. The sidebar/table remain the original inspection.
+6. Clear simulation and Reset. The original unvisited festival returns.
+7. Show the quality workflow and local 337-test/build/lint results. A hosted CI run will become available once the repository is pushed.
+
+The current gate is 337 cases in 17 files. The earlier 303 counts describe the pre-exploration checkpoint. See [extension evidence](exploration-evidence.md).

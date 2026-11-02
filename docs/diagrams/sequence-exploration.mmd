@@ -1,0 +1,20 @@
+sequenceDiagram
+    actor User
+    participant UI as ExamplePicker and ClosurePanel
+    participant Replay as Existing replay controller
+    participant Hook as useClosureSimulation
+    participant UseCase as simulateClosure
+    participant Domain as partitionGraph
+    User->>UI: Select example
+    UI->>Replay: load(fresh graph)
+    Note over Replay: Existing validation, analysis, READY history
+    User->>Replay: Run to End
+    User->>UI: Choose bridge or island closure
+    UI->>Hook: Select target for completed graph
+    Hook->>UseCase: Compare closure
+    UseCase->>Domain: Partition original network
+    UseCase->>Domain: Partition surviving network
+    Domain-->>UseCase: Deterministic groups and counts
+    UseCase-->>Hook: Immutable comparison
+    Hook-->>UI: Overlay and explicit component lists
+    Note over UI,Replay: Original cursor, table, history, and printed result unchanged

@@ -61,3 +61,9 @@ The presentation now uses a restrained charcoal/green system with 4–5 px corne
 The graph retains its original display projection, names, state patterns, focus overlays, and critical badges. Decorative waves/compass/shore layers were removed, and node/edge colors were refined for clarity. Current proof styling uses a quiet inset area and a single rule rather than another rounded card. Existing event handlers, models, replay, print, and reduced-motion behavior are unchanged.
 
 See [the UI audit and verification](ui-polish-evidence.md) for checks, limitations, and current screenshots.
+
+## Graph exploration controls
+
+The toolbar adds an action selector for examples and a native What-if closure disclosure. The latter is available for comparison after the graph is completed. Its overlay shows closed items and component colors; its explicit component-ID list supplies a textual grouping. Escape closes the popover while retaining the scenario, and Clear simulation restores the baseline styling.
+
+Critical chips are native pressed-state buttons. Their selected recorded proof/event number changes without changing the selected replay event. The completed default laptop layout remains within the original viewport; exploration popovers stay inside 390/320 px mobile widths. See [exploration design](exploration.md) and [evidence](exploration-evidence.md).

@@ -85,3 +85,15 @@ The [verification prompt](prompts/engineering-prompts.md#verification-review) de
 Replay now uses brief event/focus transitions without timers or automatic cursor advancement. Reduced-motion settings disable them. The live announcement region stays mounted as its animated content changes.
 
 Print summary is enabled only after completion. A print-only component reads the same selected ReplayView and recorded proofs. It includes component count, sorted critical IDs, all bridge/articulation proofs, and the final node table. Printing does not call analysis or move the cursor. Reset/failure clears the report; direct printing before completion shows an incomplete notice. Browser checks produced one A4 page for the demo.
+
+## Graph exploration and repository checks
+
+The next extension exposed the cycle-only, branching-root, and disconnected/isolated cases as selectable examples. They use the existing load/validation/service path and do not change the saved original demo.
+
+A separate pure flood-fill operation compares component partitions after closing one edge or node. A graph-bound hook enables it only after completion, so an explicit scenario cannot leak future findings during replay. The map shows a simulation overlay; baseline traversal values and classifications stay intact. Closing the only island yields an empty surviving partition without changing the engine's input limits.
+
+Critical chips now select a proof from the reached history. Selection is tied to the current graph and clears visibly on Reset/replacement/error. The event cursor stays unchanged.
+
+Tests cover CD/DE/D, disconnected and empty-survivor cases, unknown targets, frozen values, input permutations, and agreement with Tarjan for all single removals over 75 small graphs. UI tests verify keyboard interaction, example loading, stale clearing, printing, and unchanged analysis counts. All 34 new cases and all 303 previous cases passed: 337 total.
+
+GitHub Actions is configured to install from the lockfile, run tests, build, and lint. The local equivalents passed; hosted execution is pending publication because the repository currently has no remote. See [design](exploration.md) and [actual evidence](exploration-evidence.md).

@@ -4,7 +4,7 @@ A local React + TypeScript application that lets a festival volunteer inspect an
 
 All five phases are complete. The interface includes the responsive native SVG map, Load/Step/Run to End/Reset controls, numerical event explanations, expandable history, traversal table, and safety summary.
 
-![Completed desktop interface](docs/screenshots/ui-polish/completed-desktop.png)
+![Completed desktop interface](docs/screenshots/exploration/completed-desktop.png)
 
 ## Run locally
 
@@ -28,7 +28,7 @@ npm.cmd run build
 npm.cmd run lint
 ```
 
-The current UI refinement passed **303 tests in 13 files** (13.36 s), production build, and lint using the normal commands. All existing tests were retained. See [UI refinement evidence and current captures](docs/ui-polish-evidence.md). The preceding reliability checkpoint also passed two consecutive normal runs.
+The current exploration extension passed **337 tests in 17 files** (51.65 s on the final run), production build, and lint using the normal commands. All 303 existing tests were retained, with 34 additional cases. See [exploration verification](docs/exploration-evidence.md) and the earlier [UI refinement evidence](docs/ui-polish-evidence.md).
 
 The 54-event tests retain all assertions. Cached/scoped queries avoid repeated full-page accessibility searches; two-worker execution limits contention; only the two exhaustive full-replay tests have a 20-second budget. Other tests keep the five-second default.
 
@@ -47,6 +47,20 @@ See [reliability and optional-feature evidence](docs/reliability-and-optionals.m
 Only Load calls AnalysisService.prepare and executes DFS. Navigation, Reset, rerenders, and history expansion use the prepared immutable history. Panels read only the selected snapshot and already-replayed events; future classifications are never exposed early.
 
 The stack is React, TypeScript, Vite, Tailwind CSS, native SVG, React useReducer, Vitest, React Testing Library, jsdom, and Oxlint. Phase 5 adds no dependencies or external services.
+
+## Examples, closures, and proof inspection
+
+Use **Load an example…** to load the festival, cycle-only, branching-root, or disconnected/isolated graph through the existing validation and analysis path. Selection immediately prepares a fresh replay. **Reset** and **Load My Archipelago** retain their original behavior.
+
+After **Run to End**, open **What-if closure** and choose a bridge or island. The map marks the closure and colors surviving components; the panel lists their IDs and compares counts. Closing CD gives 1 → 2 components, closing DE gives 1 → 1, and closing D gives 1 → 2. **Clear simulation** restores the original map styling. Press Escape or toggle the disclosure to see the full map while retaining the overlay.
+
+The original event, table, critical markers, history, and print report remain the original inspection. The simulation compares connectivity only; it does not reclassify the surviving graph's bridges/articulations.
+
+Click a critical-item chip to inspect its recorded numerical proof and event number. This never moves the replay cursor or exposes future events.
+
+## Automated repository checks
+
+[GitHub Actions](.github/workflows/quality.yml) runs locked installation, tests, production build, and lint on pushes, pull requests, and manual dispatch. The workflow uses Node 22 and no project secrets. Local test/build/lint checks pass. No Git remote is configured yet, so a hosted run has not been executed; it will run once this repository is pushed to GitHub.
 
 ## Expected demonstration
 
@@ -70,6 +84,8 @@ The engine accepts 1..12 nodes and 0..20 undirected edges, including disconnecte
 - [Replay/controller contract](docs/replay-controller.md)
 - [Presentation design and accessibility](docs/ui-design.md)
 - [UI refinement audit and verification](docs/ui-polish-evidence.md)
+- [Examples, closure simulation, and selectable proofs](docs/exploration.md)
+- [Exploration tests and browser evidence](docs/exploration-evidence.md)
 - [Reliability fix and optional-feature evidence](docs/reliability-and-optionals.md)
 - [Development notes and AI use](docs/ai-prompts.md)
 - [Engineering prompt collection](docs/prompts/engineering-prompts.md)

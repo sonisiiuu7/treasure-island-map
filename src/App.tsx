@@ -11,6 +11,9 @@ import { EventHistory } from './presentation/components/EventHistory'
 import { NodeTable } from './presentation/components/NodeTable'
 import { SafetySummary } from './presentation/components/SafetySummary'
 import { PrintSafetySummary } from './presentation/components/PrintSafetySummary'
+import { ExamplePicker } from './presentation/components/ExamplePicker'
+import { ClosurePanel } from './presentation/components/ClosurePanel'
+import { useClosureSimulation } from './presentation/hooks/useClosureSimulation'
 import './App.css'
 
 interface AppProps {
@@ -26,6 +29,7 @@ export default function App({ analysisService, originalDemoGraph }: AppProps) {
   )
   const controller = useReplayController(service, originalDemoGraph)
   const { view } = controller
+  const { simulation, selectClosure } = useClosureSimulation(view)
 
   return (
     <main className="app-shell mx-auto" data-replay-status={view.status}>
@@ -49,7 +53,12 @@ export default function App({ analysisService, originalDemoGraph }: AppProps) {
         </div>
       </header>
 
-      <ReplayControls controller={controller} />
+      <ReplayControls controller={controller}>
+        <div className="exploration-controls">
+          <ExamplePicker onLoad={graph => controller.load(graph)} />
+          <ClosurePanel view={view} simulation={simulation} onSelect={selectClosure} />
+        </div>
+      </ReplayControls>
 
       {view.errors.length > 0 && (
         <section className="validation-alert" role="alert" aria-labelledby="validation-title">
@@ -62,7 +71,7 @@ export default function App({ analysisService, originalDemoGraph }: AppProps) {
 
       <div className="dashboard" id="inspection">
         <div className="map-column">
-          <IslandMap view={view} />
+          <IslandMap view={view} simulation={simulation} />
           <NodeTable view={view} />
         </div>
         <div className="inspection-column">

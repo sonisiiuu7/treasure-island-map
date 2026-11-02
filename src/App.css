@@ -227,6 +227,54 @@ progress::-moz-progress-bar { background: #4c7b64; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
+
+/* Exploration is separate from the selected DFS replay. */
+.replay-toolbar { flex-wrap: wrap; }
+.exploration-controls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.example-picker select, .closure-panel > summary, .closure-popover select { min-height: 34px; border: 1px solid #cbd5ce; border-radius: 4px; background: #fff; color: var(--ink); font-size: 12px; padding: 7px 10px; }
+.example-picker select { width: 192px; cursor: pointer; }
+select:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+.closure-panel { position: relative; }
+.closure-panel > summary { cursor: pointer; list-style: none; }
+.closure-panel > summary::after { content: "⌄"; margin-left: 8px; color: var(--muted); }
+.closure-panel[open] > summary { border-color: var(--teal); }
+.closure-popover { position: absolute; right: 0; top: calc(100% + 8px); width: 350px; max-width: calc(100vw - 32px); max-height: 65vh; overflow-y: auto; z-index: 30; border: 1px solid #adbfaf; border-radius: 5px; background: #fff; box-shadow: 0 4px 16px #203a2920; padding: 14px; }
+.closure-popover h2 { font-size: 14px; font-weight: 650; }
+.closure-popover p { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 7px 0 11px; }
+.closure-popover label { font-size: 11px; font-weight: 600; display: block; margin-bottom: 5px; }
+.closure-popover select { width: 100%; }
+.closure-popover select:disabled { color: #7e8a82; background: #f4f6f3; }
+.closure-result { margin-top: 13px; border-top: 1px solid var(--border); padding-top: 12px; }
+.closure-result > strong { font: 600 14px/1.4 var(--mono); }
+.closure-result ol { list-style: none; margin: 10px 0 13px; }
+.closure-result li { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; line-height: 1.5; margin-top: 6px; }
+.component-key { width: 10px; height: 10px; flex: 0 0 auto; margin-top: 4px; border-radius: 2px; }
+.map-heading-meta { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 5px 12px; }
+.simulation-indicator { color: #64437b; font-size: 10px; font-weight: 600; }
+.map-edge[data-closed="true"] .connection-line { stroke: #9b655d; stroke-dasharray: 2 6; opacity: .5; }
+.map-edge[data-closed="true"] .bridge-label rect { fill: #f4f1f0; stroke: #b9aaa5; }
+.map-node[data-closed="true"] .island-land { fill: #f0e9e6; stroke: #a07770; stroke-dasharray: 3 2; }
+.map-node[data-closed="true"] .island-marker { fill: #faf6f3; stroke: #a07770; }
+.map-node[data-closed="true"] .island-id { paint-order: stroke; stroke: #faf6f3; stroke-width: 3px; }
+.closed-node-mark { fill: none; stroke: #a65b4e; stroke-width: 2; }
+button.finding-chip { cursor: pointer; font-family: var(--mono); }
+button.finding-chip:hover { filter: brightness(.95); }
+button.finding-chip[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 2px; font-weight: 750; }
+.recorded-proof-event { display: block; margin-top: 5px; font-size: 10px; color: var(--muted); }
+@media (max-width: 1050px) and (min-width: 701px) {
+  .replay-toolbar { gap: 10px 14px; }
+  .exploration-controls { order: 3; margin-left: 0; }
+}
+@media (max-width: 700px) {
+  .exploration-controls { width: 100%; margin-left: 0; flex-wrap: wrap; }
+  .example-picker { flex: 1; }
+  .example-picker select { width: 100%; min-height: 40px; }
+  .closure-panel { flex: 1; }
+  .closure-panel > summary { min-height: 40px; white-space: nowrap; }
+  .closure-popover { right: 0; width: 300px; max-width: calc(100vw - 32px); }
+  .map-heading-meta { max-width: 65%; }
+}
+
 @page { size: A4; margin: 12mm; }
 @media print {
   *, *::before, *::after { animation: none !important; transition: none !important; box-shadow: none !important; }

@@ -1,6 +1,7 @@
 import type { ReplayController } from '../hooks/useReplayController'
+import type { ReactNode } from 'react'
 
-export function ReplayControls({ controller }: { controller: ReplayController }) {
+export function ReplayControls({ controller, children }: { controller: ReplayController; children?: ReactNode }) {
   const { view, load, step, runToEnd, reset } = controller
   const { completedEvents, totalEvents } = view.progress
   return (
@@ -19,6 +20,7 @@ export function ReplayControls({ controller }: { controller: ReplayController })
           Reset
         </button>
       </div>
+      {children}
       <div className="replay-progress">
         <span>{totalEvents > 0 ? `Event ${completedEvents} / ${totalEvents}` : 'Ready when you are'}</span>
         <progress aria-label="Replay progress" value={completedEvents} max={totalEvents || 1} />

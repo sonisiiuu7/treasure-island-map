@@ -223,3 +223,26 @@ appearance. Check keyboard operation, no future events, unchanged replay
 state, and no extra analysis calls. Keep the implementation small enough
 to explain and verify during a live modification.
 ```
+
+## Examples and what-if exploration
+
+```text
+Make the edge cases easy to demonstrate: add selectable cycle-only,
+branching-root, and disconnected/isolated graphs. Load them through the
+existing service, and keep Reset tied to the original demo.
+
+After completion, let me close one bridge or island and compare the
+surviving components. Use a separate pure connectivity calculation; don't
+rerun or replace the original replay. Check CD, DE, D, disconnected graphs,
+and removal of the last island. Keep results immutable and deterministic.
+
+Make each critical chip show its recorded numerical proof and event number.
+Use only events already reached and leave the selected replay event alone.
+
+Add repository checks for locked installation, tests, build, and lint.
+Keep the workflow simple, and distinguish local results from a hosted run.
+
+Verify keyboard access, stale clearing, custom-original Reset, printing,
+component grouping, and unchanged analysis-call counts. Keep the same
+domain/application/presentation boundaries and preserve existing tests.
+```

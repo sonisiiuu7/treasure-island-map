@@ -18,6 +18,7 @@ flowchart TB
 
     subgraph Presentation["Presentation: React and native SVG"]
         Controller["useReplayController<br/>load / step / runToEnd / reset"]
+        Explore["ExamplePicker / ClosurePanel<br/>useClosureSimulation"]
         Panels["IslandMap / ReplayControls / EventPanel<br/>EventHistory / NodeTable / SafetySummary<br/>PrintSafetySummary"]
     end
 
@@ -25,6 +26,8 @@ flowchart TB
         Service["AnalysisService.prepare(graph)"]
         Reducer["replayReducer<br/>Pure state transitions"]
         Selectors["replaySelectors<br/>One selected ReplayView"]
+        Simulation["simulateClosure<br/>Original and surviving connectivity"]
+        Proofs["selectCriticalProof<br/>Reached history only"]
     end
 
     subgraph Domain["Domain: pure TypeScript"]
@@ -32,7 +35,8 @@ flowchart TB
         Build["SortedAdjacencyBuilder"]
         Contract["GraphAnalyzer interface"]
         Tarjan["TarjanLowLinkAnalyzer"]
-        Models["Graph / AnalysisResult<br/>ReplayEvent / TraversalSnapshot"]
+        Partition["partitionGraph<br/>Pure flood fill"]
+        Models["Graph / AnalysisResult<br/>ReplayEvent / TraversalSnapshot<br/>ClosureSimulation / ConnectivityPartition"]
     end
 
     Factory["createFestivalArchipelago()<br/>Fresh original demo data"]
@@ -56,6 +60,13 @@ flowchart TB
     Reducer --> Models
     Selectors --> Models
     Factory --> Models
+    App --> Explore
+    Explore -->|"example Load"| Controller
+    Explore -->|"explicit closure selection"| Simulation
+    Simulation --> Partition
+    Panels -->|"proof selection"| Proofs
+    Proofs --> Models
+    Partition --> Models
 ```
 
 ## 2. Domain and analysis UML class diagram
@@ -459,3 +470,7 @@ The DFS itself is O(V+E). Sorting adjacency and copying complete per-event snaps
 - sequence-replay.mmd
 
 The editable diagrams match the implemented boundaries. The concrete presentation components and accessibility/layout decisions are documented in ui-design.md; the completed application and actual checks are recorded in phase-5-evidence.md.
+
+## Graph exploration extension
+
+The architecture now includes graph examples, independent connectivity partitioning, and reached-proof selection. Existing replay transitions and analyzer/service contracts are unchanged. See [exploration design and sequence](exploration.md) and [verification evidence](exploration-evidence.md).

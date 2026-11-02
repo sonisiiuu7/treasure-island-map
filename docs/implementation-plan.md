@@ -77,3 +77,11 @@ The history-type filter is a proposed extension. It has not been implemented.
 ## Optional requirements complete
 
 Gentle presentation-only replay animation and the printable safety summary are implemented. Motion respects reduced-motion settings. Printing consumes the completed selected view and leaves the event model, cursor, and analysis untouched. Ten new tests cover report content, incomplete/error/Reset clearing, alternate graphs, printing actions, keyboard operation, and animation/live-region behavior. See [the actual verification record](reliability-and-optionals.md).
+
+## Graph exploration extension
+
+The five-phase baseline is preserved. Additional work now exposes selectable graph examples, single-closure connectivity, reached critical-item proof selection, and automated repository checks.
+
+The domain owns connectivity partitioning and immutable closure models. Application functions orchestrate closure comparison and proof queries. A graph-bound presentation hook and native controls manage exploration without changing replay actions, history, or DFS. Existing GraphAnalyzer/AnalysisService/controller contracts remain.
+
+Verification: 34 new tests; 337 total across 17 files; production build and lint pass. Browser checks cover CD/DE/D, all example outcomes, desktop/mobile/print, and 240 event layouts plus six closure layouts. GitHub Actions is configured but has not run on GitHub because no remote is set. See [exploration evidence](exploration-evidence.md).

@@ -2,6 +2,8 @@ import { useId } from 'react'
 import type { ReplayView } from '../../application/replaySelectors'
 import type { Island } from '../../domain/models/Graph'
 import type { EdgeStatus } from '../../domain/models/TraversalSnapshot'
+import type { ClosureSimulation } from '../../domain/models/ClosureSimulation'
+import { componentColors } from '../componentColors'
 
 interface Point { x: number; y: number }
 const edgeLabels: Record<EdgeStatus, string> = {
@@ -39,7 +41,7 @@ function namePosition(node: Island, p: Point, portrait: boolean) {
   }
 }
 
-function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean }) {
+function MapDrawing({ view, portrait, simulation }: { view: ReplayView; portrait: boolean; simulation: ClosureSimulation | null }) {
   const instance = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const graph = view.graph
   const snapshot = view.snapshot
@@ -59,6 +61,7 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
         Dashed bridges with ! are critical; AP badges mark articulation islands.
         A ring and NOW label identify the current island; an arrow identifies the current bridge.
         {view.status === 'COMPLETED' ? ` Final critical bridges: ${snapshot.bridgeIds.join(', ') || 'none'}. Articulation islands: ${snapshot.articulationIds.join(', ') || 'none'}.` : ' Inspection is not complete.'}
+        {simulation && ` Simulation: ${simulation.target.kind === 'EDGE' ? 'bridge' : 'island'} ${simulation.target.id} closed. ${simulation.after.componentCount} surviving components. Original inspection values are retained.`}
       </desc>
       <defs>
         <pattern id={`sea-grid-${instance}`} width="24" height="24" patternUnits="userSpaceOnUse">
@@ -85,13 +88,15 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
         const labelY = (a.y + b.y) / 2 + (dx / length) * offset * direction
         const state = snapshot.edges[edge.id]
         const current = view.focus?.edgeId === edge.id
-        const label = `${current ? '› ' : ''}${state === 'BRIDGE' ? '! ' : ''}${edge.id}`
+        const closed = simulation?.removedEdgeIds.includes(edge.id) ?? false
+        const label = `${closed ? '× ' : ''}${current ? '› ' : ''}${state === 'BRIDGE' ? '! ' : ''}${edge.id}`
         const labelWidth = Math.max(30, label.length * 7.5 + 12)
         return (
           <g key={edge.id} className={`map-edge edge-${state.toLowerCase()}`}
             data-testid={`bridge-${edge.id}`} data-state={state} data-current={current}
-            aria-label={`Bridge ${edge.id}: ${edgeLabels[state]}${current ? '; current' : ''}`}>
-            <title>{`Bridge ${edge.id}: ${edgeLabels[state]}${current ? '; current inspection' : ''}`}</title>
+            data-closed={closed}
+            aria-label={`Bridge ${edge.id}: ${edgeLabels[state]}${current ? '; current' : ''}${closed ? '; closed in simulation' : ''}`}>
+            <title>{`Bridge ${edge.id}: ${edgeLabels[state]}${current ? '; current inspection' : ''}${closed ? '; closed in simulation' : ''}`}</title>
             {current && <line key={view.eventIndex} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className="current-edge-halo" />}
             <line data-role="connection" x1={a.x} y1={a.y} x2={b.x} y2={b.y}
               strokeDasharray={edgeDash[state]} className="connection-line" />
@@ -109,16 +114,22 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
         const state = snapshot.nodes[node.id]
         const current = view.focus?.nodeId === node.id
         const articulation = snapshot.articulationIds.includes(node.id)
+        const closed = simulation?.removedNodeId === node.id
+        const group = simulation?.after.groupByNode[node.id]
+        const color = group === undefined ? null : componentColors[group % componentColors.length]
         return (
           <g key={node.id} className={`map-node node-${state.status.toLowerCase()}`}
             data-testid={`island-${node.id}`} data-state={state.status}
             data-current={current} data-articulation={articulation}
-            aria-label={`Island ${node.id}, ${node.name}: ${state.status.toLowerCase()}${articulation ? '; articulation island' : ''}${current ? '; current' : ''}`}>
-            <title>{`${node.id} · ${node.name}. ${state.status.toLowerCase()}. Discovery ${state.discovery ?? 'unset'}, low ${state.low ?? 'unset'}.${articulation ? ' Articulation island.' : ''}${current ? ' Current focus.' : ''}`}</title>
-            <ellipse cx={p.x} cy={p.y} rx="23" ry="16" className="island-land" />
+            data-closed={closed} data-component={group}
+            aria-label={`Island ${node.id}, ${node.name}: ${state.status.toLowerCase()}${articulation ? '; articulation island' : ''}${current ? '; current' : ''}${closed ? '; closed in simulation' : group === undefined ? '' : `; simulation component ${group + 1}`}`}>
+            <title>{`${node.id} · ${node.name}. ${state.status.toLowerCase()}. Discovery ${state.discovery ?? 'unset'}, low ${state.low ?? 'unset'}.${articulation ? ' Articulation island.' : ''}${current ? ' Current focus.' : ''}${closed ? ' Closed in simulation.' : group === undefined ? '' : ` Simulation component ${group + 1}.`}`}</title>
+            <ellipse cx={p.x} cy={p.y} rx="23" ry="16" className="island-land"
+              style={color ? { fill: color.fill, stroke: color.stroke, strokeWidth: 2 } : undefined} />
             {current && <circle key={view.eventIndex} cx={p.x} cy={p.y} r="30" className="current-node-ring" />}
             {articulation && <circle cx={p.x} cy={p.y} r="20" className="articulation-ring" />}
             <circle cx={p.x} cy={p.y} r="14" className="island-marker" />
+            {closed && <path className="closed-node-mark" d={`M${p.x - 18} ${p.y - 13} L${p.x + 18} ${p.y + 13}`} aria-hidden="true" />}
             <text x={p.x} y={p.y + 5} textAnchor="middle" className="island-id">{node.id}</text>
             <text x={name.x} y={name.y} textAnchor={name.anchor} className="map-island-name">{name.displayName}</text>
             {articulation && <g className="articulation-badge" transform={`translate(${p.x + 23} ${p.y + 16})`}>
@@ -134,17 +145,20 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
   )
 }
 
-export function IslandMap({ view }: { view: ReplayView }) {
+export function IslandMap({ view, simulation = null }: { view: ReplayView; simulation?: ClosureSimulation | null }) {
   return (
     <section className="panel map-panel" aria-labelledby="archipelago-title">
       <div className="panel-heading">
         <h2 id="archipelago-title">Your archipelago</h2>
-        <span className="muted">{view.graph ? `${view.graph.nodes.length} islands · ${view.graph.edges.length} bridges` : 'Map unavailable'}</span>
+        <div className="map-heading-meta">
+          {simulation && <span className="simulation-indicator">Simulation: {simulation.target.kind === 'EDGE' ? 'bridge' : 'island'} {simulation.target.id} closed · {simulation.after.componentCount} components</span>}
+          <span className="muted">{view.graph ? `${view.graph.nodes.length} islands · ${view.graph.edges.length} bridges` : 'Map unavailable'}</span>
+        </div>
       </div>
       {view.graph && view.snapshot ? (
         <div className="map-canvas">
-          <MapDrawing view={view} portrait={false} />
-          <MapDrawing view={view} portrait />
+          <MapDrawing view={view} portrait={false} simulation={simulation} />
+          <MapDrawing view={view} portrait simulation={simulation} />
         </div>
       ) : <div className="map-empty"><p>No map is available for this inspection.</p></div>}
       <ul className="map-legend" aria-label="Map legend">
