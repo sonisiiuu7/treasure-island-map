@@ -30,7 +30,7 @@ npm.cmd run lint
 
 The Phase 5 checkpoint passed **293 tests in 12 files**, production build, and lint. This includes all 261 previous tests and 32 new component/application cases. Actual Chrome checks covered 1366 × 768 desktop and 390 × 844 mobile emulation, keyboard Step, the three required numerical proofs, completion, and Reset.
 
-A subsequent audit reproduced a five-second timeout in the 54-event integration test. All 293 tests passed with a diagnostic 15-second timeout and one worker; build/lint passed. A permanent fix for the normal test command remains pending. See the current qualification in [the development record](docs/ai-prompts.md#actual-iterations).
+A subsequent audit reproduced a five-second timeout in the 54-event integration test. All 293 tests passed with a diagnostic 15-second timeout and one worker; build/lint passed. A permanent fix for the normal test command remains pending. See the current qualification in [development notes](docs/ai-prompts.md#verification-and-current-limitations).
 
 See [Phase 5 evidence](docs/phase-5-evidence.md), [browser measurements](docs/browser-check-results.json), and the [interview walkthrough](docs/demo-walkthrough.md). Cross-browser, physical-phone, and screen-reader testing were not performed.
 
@@ -67,7 +67,7 @@ The engine accepts 1..12 nodes and 0..20 undirected edges, including disconnecte
 - [Event schema and emission rules](docs/event-schema.md)
 - [Replay/controller contract](docs/replay-controller.md)
 - [Presentation design and accessibility](docs/ui-design.md)
-- [AI prompting strategy, engineering decisions, and development record](docs/ai-prompts.md)
-- [Refined engineering prompt portfolio](docs/prompts/refined-engineering-prompts.md)
+- [Development notes and AI use](docs/ai-prompts.md)
+- [Engineering prompt collection](docs/prompts/engineering-prompts.md)
 - [Interview discussion and follow-up questions](docs/interview-discussion.md)
 - [Phase 1 evidence](docs/phase-1-evidence.md), [Phase 2 evidence](docs/phase-2-evidence.md), [Phase 3 evidence](docs/phase-3-evidence.md), [Phase 4 evidence](docs/phase-4-evidence.md), [Phase 5 evidence](docs/phase-5-evidence.md)

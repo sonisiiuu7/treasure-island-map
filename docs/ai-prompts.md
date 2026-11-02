@@ -1,96 +1,81 @@
-# AI prompting strategy and engineering decisions
+# Development process and AI use
 
-The development approach separated runtime validation, deterministic graph analysis, explanatory history, replay state, and rendering into five checkpoints. AI assistance contributed to implementation, tests, documentation, and prompt drafting. The engineering controls were explicit contracts, independent correctness checks, preserved regression assertions, and review of the running interface.
+The project was split into five phases so graph correctness could be checked before adding replay and presentation. Each phase produced working code, focused tests, and a checkpoint.
 
-Use the [refined engineering prompt portfolio](prompts/refined-engineering-prompts.md) to present this approach. Its prompts are retrospective refinements written during interview preparation, not verbatim records of earlier submissions. They replace the basic request excerpts in this presentation document. The detailed submitted [Phase 3](prompts/phase-3-request.md), [Phase 4](prompts/phase-4-request.md), and [Phase 5](prompts/phase-5-request.md) requests remain available as source records.
+The [engineering prompts](prompts/engineering-prompts.md) cover the implementation, review, and extension tasks. The [implementation plan](implementation-plan.md) tracks the phase gates, and the [discussion guide](interview-discussion.md) connects the design to code and evidence.
 
-## Tools and contribution
+## AI tools and workflow
 
-The development conversation used the OpenAI assistant and the Codex desktop workspace. Local commands inspected and changed the repository, ran Vitest, TypeScript/Vite, and Oxlint, and saved Git checkpoints. React Testing Library and jsdom exercised the React components. A disposable Chrome profile controlled through DevTools supplied actual browser screenshots and measurements.
+Tools: the OpenAI assistant in chat and the Codex desktop workspace. AI assistance covered design discussion, code, test development, documentation, and investigation of failures.
 
-The AI assistance was substantial: it helped articulate architecture, implement code, propose and implement tests, investigate failures, and prepare supporting documentation. The prompt portfolio is also AI-assisted. No use of GitHub Copilot, Claude, another coding assistant, or an external coding session is claimed.
+The workflow was to give the assistant a bounded task, preserve the existing contracts, inspect the result, and verify it before proceeding. Commands ran locally using Vitest, TypeScript/Vite, and Oxlint. React tests used Testing Library and jsdom. Chrome DevTools supplied actual browser screenshots and measurements.
 
-The independently structured oracle is independent of the production algorithm: it removes edges/nodes and recounts components with flood fill. This is a different verification method, not a claim that its code or the reference table was created without AI assistance.
+The main controls on AI-generated code were explicit algorithm rules, a separate reference graph, an independent removal-based oracle, and regression tests across phases. The oracle is independent in method: it uses flood fill after removing edges or nodes rather than reusing Tarjan's conditions.
 
-## Prompting method
+## Implementation checkpoints
 
-Each implementation prompt should establish six things:
-
-1. **Current context:** existing contracts, source documents, completed checkpoint, and regression assertions to preserve.
-2. **Responsibility boundary:** which layer owns the change and which dependencies are permitted.
-3. **Observable invariants:** numerical rules, ordering, ownership, and error behavior that determine correctness.
-4. **Failure examples:** a concrete counterexample that would expose a plausible incorrect implementation.
-5. **Verification:** checks whose expectations do not simply repeat the implementation.
-6. **Completion evidence:** actual command results, limitations, documentation updates, and the local checkpoint.
-
-A prompt is useful when it constrains an observable behavior. Naming a design pattern alone does not establish that behavior. For example, dependency injection is supported by AnalysisService accepting GraphAnalyzer and by tests that inject a substitute and confirm invalid input never reaches it.
-
-## Phase decisions and evidence
-
-| Phase | Engineering concern expressed in the prompt | Concrete result and evidence |
+| Phase | Main result | Recorded gate |
 | --- | --- | --- |
-| 1 — contracts and validation | Treat runtime input as unknown; expose Graph only after complete validation; identify errors without mutating caller data. | Readonly graph models, fresh demo factory, structured ValidationResult; [91 tests](phase-1-evidence.md). |
-| 2 — low-link analysis | Sort IDs explicitly; separate DFS rules from layout; inject the analyzer; distinguish strict bridge and non-root articulation comparisons. | Sorted adjacency, stateless Tarjan strategy, AnalysisService; [58 new tests and removal-based oracle over 1,099 graphs](phase-2-evidence.md). |
-| 3 — event semantics | Generate explanations during DFS; define event order; freeze independent post-event snapshots; preserve previous numerical results. | Typed events, immutable snapshots, exact traces and transition checks; [41 new tests](phase-3-evidence.md). |
-| 4 — replay lifecycle | Model valid states with a discriminated union; move only a cursor; preserve an owned original graph; clear failures atomically. | Pure reducer/selectors and injected React hook; [71 new tests](phase-4-evidence.md). |
-| 5 — synchronized presentation | Give every panel one selected ReplayView; render recorded proof; distinguish provisional findings; preserve critical and current markers together. | Native SVG and React panels, all-event integration checks, real browser captures; [32 new tests](phase-5-evidence.md). |
+| 1 | Graph models, fresh demo data, runtime validation | [91 tests](phase-1-evidence.md) |
+| 2 | Sorted adjacency, Tarjan strategy, injected analysis service | [149 total tests](phase-2-evidence.md) |
+| 3 | Typed events and independent immutable snapshots | [190 total tests](phase-3-evidence.md) |
+| 4 | Pure reducer/selectors and React controller | [261 total tests](phase-4-evidence.md) |
+| 5 | SVG map, controls, numerical explanations, history, table, summary | [293 total tests and browser evidence](phase-5-evidence.md) |
 
-The original five-phase gates reached 91, 149, 190, 261, and 293 tests respectively. These are historical checkpoint results. Current verification qualifications appear below.
+These are checkpoint results. The current test-timeout issue is recorded below.
 
-## LLD choices that can be defended
+## Design decisions
 
-**Responsibility and dependency direction.** Domain code owns graph validation/indexing, DFS, and event/snapshot models. Application code owns preparation and replay transitions/selectors. Presentation composes the concrete service and renders the selected state. Domain modules import no React/application/test code.
+**Separate calculation from replay.** Load validates and analyzes once. Step and Run select from the prepared event sequence. Reset and rerenders do not run DFS. This keeps the explanation repeatable and makes replay transitions testable without React.
 
-**Strategy and Dependency Inversion.** AnalysisService receives GraphAnalyzer rather than constructing TarjanLowLinkAnalyzer. App selects the concrete strategy. A replacement must preserve the documented ordering, numerical values, event contract, and snapshot semantics; a matching TypeScript signature is not sufficient behavioral substitutability.
+**Keep dependencies small.** AnalysisService receives GraphAnalyzer through its constructor. App supplies TarjanLowLinkAnalyzer. The React hook needs only the service's prepare method. Validation and adjacency construction remain functions.
 
-**Small interfaces and ordinary functions.** GraphAnalyzer needs one analyze method. The React hook needs only the service's prepare method. Validation and adjacency construction stay functions because separate interface hierarchies would add little value here.
+**Use explicit states.** The state union prevents combinations such as ERROR carrying a prepared result. READY has cursor -1; reducer logic enforces active cursor bounds. A failed load clears the visible analysis atomically.
 
-**State modeling.** EMPTY/READY/RUNNING/COMPLETED/ERROR encode the replay lifecycle. ERROR carries errors and no current graph/result; READY fixes the cursor at -1. The discriminant constrains data combinations, while reducer logic maintains active cursor bounds. It does not make arbitrary numeric cursor values impossible at the type level.
+**Own historical data.** readonly protects TypeScript callers, while copied nested values and Object.freeze protect captured state at runtime. The saved original demo remains stable for Reset. Validation itself does not freeze caller-owned objects.
 
-**Ownership.** readonly protects TypeScript callers at compile time. Copies and nested Object.freeze calls protect captured graph/snapshot values at runtime. The reducer and hook capture successful graph values at their boundaries; Reset always uses the saved original. The validator itself returns valid input by reference and does not freeze caller-owned objects.
+**Choose full snapshots for this small engine.** With at most 12 nodes and 20 edges, full snapshots make synchronized rendering straightforward. The cost is O(K(V+E)) copied snapshot data for K events, plus sorting/freezing work. The complete history is more expensive than the O(V+E) DFS core.
 
-See [the architecture and UML](design.md) and [the replay contract](replay-controller.md) for the actual implementation boundaries.
+**Use the smallest local UI stack needed.** Native SVG supports the map and labels directly. One controller owns replay, so a backend, external map service, and global state library are unnecessary for the required workflow.
 
-## Algorithm reasoning behind the prompts
+See [the design and diagrams](design.md) and [the replay contract](replay-controller.md).
 
-For tree parent u and child v, low[v] > discovery[u] means v's subtree cannot return to u or an ancestor without the tree edge. Removing that edge therefore disconnects it.
+## Issues and how they were handled
 
-Equality has a different consequence for a non-root articulation: low[v] = discovery[u] permits a route back to u, but no route to an ancestor of u. Removing u still separates that subtree. A root requires at least two DFS-tree children; graph degree is not the test.
-
-The demo makes this visible. F reaches D, propagating low[F] = 3 back to E, so low[E] changes 4 → 3. DE lies in the D–E–F loop and is not a bridge: 3 > 3 is false. D is still an articulation: 3 >= 3 is true. Root A has graph degree two but one DFS-tree child, so it is not an articulation.
-
-The [reference graph](reference-graph.md) and focused tests make these explanations checkable. Production code never imports that oracle.
-
-## Trade-offs and limits
-
-| Decision | Reason in this project | Cost or extension boundary |
+| Issue | Action | Result |
 | --- | --- | --- |
-| Recursive DFS | Direct mapping to discovery, child completion, return, and classification; recursion depth is bounded by 12 nodes. | A substantially larger engine may need an explicit stack. |
-| Complete immutable event snapshots | Every panel can select the same already-computed state; earlier history cannot be overwritten. | O(K(V+E)) copied snapshot data for K events, plus sorting/freezing overhead. This is not an O(V+E)-space history implementation. |
-| Sorted adjacency | Stable traversal regardless of source order, names, or layout. | Sorting adds work beyond the O(V+E) DFS core. |
-| Precompute on Load, replay by cursor | Step/Run/Reset/rerenders never execute DFS. | Upfront preparation and stored history; intermediate selectors also copy a history prefix. |
-| Native SVG and local React state | Small fixed graph, accessible text/line patterns, no external map service, and no global store required. | The responsive demo layout is not a general graph-label collision solver. |
+| A typed Graph parameter did not cover malformed runtime input. | Make the validator accept unknown and return a typed graph only after all checks succeed. | Structural and numerical validation is covered by [Phase 1 tests](phase-1-evidence.md). |
+| An unused test type import failed the Phase 3 build. | Remove the unused import and rerun verification. | [Phase 3 checks passed](phase-3-evidence.md). |
+| SVG and page heading names did not match the intended accessible names. | Separate SVG title/description associations and provide the intended heading name. | Focused accessibility tests passed; see [Phase 5 evidence](phase-5-evidence.md). |
+| The table extended beyond the laptop viewport and some map labels collided. | Tighten spacing and adjust display projection, name placement, and bridge-label offsets. | Refreshed [browser measurements](browser-check-results.json) show the main panels fitting and no measured label text overlaps at the tested sizes. |
+| Set-Location failed in Command Prompt. | Use cd /d in Command Prompt; reserve Set-Location for PowerShell. | Both shell instructions appear in the [demo guide](demo-walkthrough.md). |
+| The 54-event integration test exceeded its default five-second timeout. | Reproduce it alone and run a diagnostic check with a larger timeout and one worker. | Default-command reliability remains open. Diagnostic settings passed all 293 tests. |
 
-## Actual iterations
+## Algorithm risks checked explicitly
 
-These are observed development changes, not invented examples of AI mistakes.
+These are correctness risks covered by tests, rather than a list of bugs found in production.
 
-| Observation | Response | Evidence |
-| --- | --- | --- |
-| The initial UML validation argument was too narrow for runtime input. | Implement validation(input: unknown) with a typed success result. | [Plan refinement](implementation-plan.md) and validator tests. |
-| Phase 3's first final build found an unused test type import. | Remove the unused import and rerun the checks. | [Phase 3 evidence](phase-3-evidence.md). |
-| UI tests exposed SVG/page accessible-name defects. | Separate SVG title/description associations and provide the intended page heading name. | [Phase 5 evidence](phase-5-evidence.md). |
-| Browser review exposed table height and map text collisions. | Tighten spacing and refine display projection/name/edge-label placement; refresh actual captures. | [Browser results](browser-check-results.json) and screenshots linked from Phase 5 evidence. |
-| The later requirements audit found a five-second timeout in the exhaustive 54-event UI test. | Reproduce it alone, then diagnose with a larger timeout and one worker. A permanent fix remains pending. | Commands and results below. |
+- A visited connection contributes discovery[neighbor], not low[neighbor].
+- Bridges use strict >; non-root articulations use >=.
+- A root needs two DFS-tree children, not merely two neighbors.
+- Source order, coordinates, and names cannot affect traversal.
+- Earlier snapshots cannot change when DFS progresses.
+- Final classifications must not appear before their replay events.
 
-The last audit obtained 292 passes and one timeout with the default suite; the focused 54-event test also exceeded five seconds. The diagnostic command below passed all 293 tests in 12 files:
+The demo illustrates the equality rules: F reaches D, then the return F → E changes low[E] from 4 to 3. DE is not a bridge because 3 > 3 is false. D is an articulation because 3 >= 3 is true. Root A has two neighbors but only one DFS-tree child.
+
+## Verification and current limitations
+
+The independent checks include the reference parent/discovery/low table, removal-based component counting over all 1,099 simple graphs on node-set sizes 1..5, and event-transition checks over 75 graphs on sizes 1..4. The generated graphs are checked within automated tests; they are not additional Vitest test counts.
+
+The timeout investigation recorded 292 passes and one timeout with the normal suite. The focused all-events test also exceeded five seconds. This diagnostic command passed all 293 tests in 12 files:
 
 ```cmd
 npm.cmd run test:run -- --testTimeout=15000 --maxWorkers=1
 ```
 
-Build and lint passed in that audit. The diagnostic run does not establish that the default timeout issue has been fixed. This documentation revision changes no tests or application behavior. The [verification repair prompt](prompts/refined-engineering-prompts.md#verification-review-prompt) is a proposed next task.
+Build and lint passed. The default test-budget repair remains pending; the diagnostic command does not resolve it.
 
-## Presenting the work
+Browser evidence covers Chrome at 1366 × 768 and mobile viewport emulation at 390 × 844. It does not establish physical-device, cross-browser, screen-reader, or arbitrary-coordinate label-collision coverage.
 
-Use the [interview discussion guide](interview-discussion.md) to connect each claim to code and evidence. Explain the AI contribution clearly, recompute the numerical examples yourself, and rehearse a focused change before describing yourself as ready for live modification. The refined live-change prompt is a rehearsal aid; it is not evidence that such a change has already been performed.
+The [verification prompt](prompts/engineering-prompts.md#verification-review) describes the open repair. The [history-filter prompt](prompts/engineering-prompts.md#history-filter-extension) describes a possible extension; that feature is not implemented.

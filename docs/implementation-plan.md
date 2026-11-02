@@ -66,10 +66,10 @@ All 32 new cases and all 261 earlier cases passed. Build/lint passed. Chrome che
 
 All five planned implementation phases are complete. GitHub publication and deployment were not part of this local phase.
 
-## Interview documentation refinement
+## Development notes and open items
 
-The [refined engineering prompt portfolio](prompts/refined-engineering-prompts.md) now makes the LLD boundaries, algorithm invariants, ownership rules, counterexamples, and verification contracts explicit. These are retrospective refinements; the detailed submitted Phase 3–5 source prompts remain separate.
+The [engineering prompts](prompts/engineering-prompts.md) describe the layer boundaries, algorithm rules, ownership decisions, and verification tasks. The [development notes](ai-prompts.md) record actual issues and results, and the [discussion guide](interview-discussion.md) covers the design questions.
 
-The checkpoint counts above record historical phase gates. The later requirements audit found a default five-second timeout in the 54-event integration test, reproduced in isolation. All 293 tests passed in a diagnostic run with --testTimeout=15000 --maxWorkers=1; build/lint passed. The normal-command reliability repair remains open and is described in the portfolio rather than presented as completed.
+The counts above are checkpoint results. Current verification has an open five-second timeout in the 54-event integration test, reproduced in isolation. A diagnostic run with --testTimeout=15000 --maxWorkers=1 passed all 293 tests; build/lint passed. The normal-command reliability repair remains open.
 
-This documentation revision changes no application behavior, tests, or timeout settings. See [the development record](ai-prompts.md) for actual iterations and [the interview guide](interview-discussion.md) for discussion/rehearsal material.
+The history-type filter is a proposed extension. It has not been implemented.

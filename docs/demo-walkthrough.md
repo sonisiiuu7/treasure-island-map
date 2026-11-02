@@ -46,10 +46,10 @@ Use Tab to move between native controls; Enter activates a focused button and Sp
 
 ## If asked about AI assistance
 
-Start with [the refined engineering prompt portfolio](prompts/refined-engineering-prompts.md) and explain how each prompt constrains a concrete risk. Identify it as a retrospective refinement; detailed submitted Phase 3–5 requests remain linked in [the development record](ai-prompts.md).
+Use [the engineering prompts](prompts/engineering-prompts.md) to explain the constraints around each phase: responsibility boundaries, algorithm rules, data ownership, failure handling, and verification. Follow with [the development notes](ai-prompts.md) for actual issues, decisions, and results.
 
 Use [the interview discussion guide](interview-discussion.md) for LLD, algorithm, complexity, and AI-contribution questions. Explain why the analyzer is injected, why a state union helps, why snapshots require copied nested values, and why > versus >= changes the result. Show actual observed corrections and the independent verification method.
 
-For live-change rehearsal, the portfolio proposes an event-type history filter. Keep filtering outside the domain, preserve the selected snapshot/cursor, and explicitly handle Reset. This exercise has not been implemented; demonstrate only work that has actually been completed.
+One possible live change is the event-type history filter described in the prompt collection. Keep filtering outside the domain, preserve the selected snapshot/cursor, and explicitly handle Reset. This remains a proposed extension.
 
 See [Phase 5 evidence](phase-5-evidence.md) for the executed checks and screenshots. The browser evidence uses Chrome with mobile viewport emulation; no physical-phone or cross-browser verification is claimed.

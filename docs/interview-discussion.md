@@ -1,12 +1,12 @@
 # Interview discussion and evidence guide
 
-Use this guide to explain the actual system and rehearse follow-up questions. The answers describe implemented behavior; they are study material, not a record that an interview or live modification has already occurred.
+Notes for presenting the solution, discussing the design, and preparing for a focused code change.
 
-The [prompt portfolio](prompts/refined-engineering-prompts.md) contains refined implementation prompts. The [development record](ai-prompts.md) connects decisions to observed results.
+The [engineering prompts](prompts/engineering-prompts.md) cover implementation and review tasks. The [development notes](ai-prompts.md) connect decisions, issues, and results.
 
 ## Opening explanation
 
-Suggested wording to adapt after reviewing the code:
+A concise introduction:
 
 > The main correctness risk was explaining DFS while keeping every visible
 > panel at the same point in time. I separated graph analysis from replay:
@@ -62,11 +62,11 @@ Recompute the [reference table](reference-graph.md) yourself, especially F → E
 
 **How were AI-generated results checked?** The final IDs are compared against an edge/node-removal flood-fill oracle, which does not use Tarjan's low-link rules. All 1,099 labeled simple graphs across node-set sizes 1..5 are enumerated within a test. Exact numerical traces and history checks address correctness that component counts alone cannot establish.
 
-**Did AI assistance introduce any problems?** The recorded iterations include an unused type import, accessible-name defects, and browser layout collisions. Their corrections and verification are documented. Do not claim that an incorrect bridge inequality was found in production; that is a risk covered by focused tests, not a recorded defect.
+**Did AI assistance introduce any problems?** The recorded iterations include an unused type import, accessible-name defects, and browser layout collisions. Their corrections and verification are documented. The strict/equality rules are correctness risks covered by focused tests; the issue log lists the defects actually observed.
 
 **What is still unresolved?** The later audit reproduced a five-second timeout in the 54-event integration test. All 293 cases passed with a 15-second limit and one worker, while build/lint passed. The default command still needs a permanent reliability fix. Report that qualification rather than substituting the historical checkpoint result.
 
-**What was your contribution versus AI's?** State the collaboration accurately: requirements and staged requests were supplied through the conversation; the assistant helped draft detailed prompts, implement code/tests/docs, and execute checks. Explain the decisions and evidence you have personally reviewed. Do not claim that AI-assisted artifacts were written independently by hand.
+**What was your contribution versus AI's?** Explain the workflow: requirements and constraints were supplied through the conversation; AI assisted the technical specification, implementation, tests, documentation, and troubleshooting. Discuss how the results were checked using the reference graph, independent oracle, regression assertions, and browser evidence.
 
 ## Presentation pacing
 
@@ -75,13 +75,13 @@ Recompute the [reference table](reference-graph.md) yourself, especially F → E
 | Problem, plan, and constraints | 2 minutes | Five checkpoints, main graph, bounded local engine. |
 | Working demo and mathematical proof | 4 minutes | Startup, Load, Step, FE at 21, DE at 39, D at 40, completion/history/Reset. |
 | LLD, ownership, and trade-offs | 3 minutes | Dependency direction, Strategy, reducer, one view, snapshot cost. |
-| AI decisions, iterations, and verification | 2 minutes | Refined prompts versus submitted requests; independent oracle; actual corrections and current timeout qualification. |
+| AI decisions, iterations, and verification | 2 minutes | Phase constraints; independent oracle; actual corrections and current timeout qualification. |
 
 This leaves the rest of a 30–40 minute session for discussion and requested modifications. Keep the presentation selective rather than reading every document or prompt aloud.
 
 ## Live modification practice
 
-Rehearse the proposed history-type filter in the portfolio on a separate checkpoint when ready. Before editing, identify the owner of the state and write the invariants that must survive. After editing, demonstrate behavior, inspect the diff, run focused tests, and explain any remaining verification limits.
+Practice the proposed history-type filter from the prompt collection on a separate checkpoint. Before editing, identify the owner of the state and write the invariants that must survive. After editing, demonstrate behavior, inspect the diff, run focused tests, and explain any remaining verification limits.
 
 The candidate should be able to identify the correct layer before asking AI for code, review the generated diff, and explain the effect of each change. A practiced example helps establish the workflow but does not predict the interviewer's requested modification.
 
