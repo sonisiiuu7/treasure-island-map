@@ -4,7 +4,7 @@ A local React + TypeScript application for explaining bridge and articulation-po
 
 ## Current checkpoint
 
-Phase 1 is complete: configuration, readonly graph models, fresh demo graph data, runtime validation, and focused tests. The React page is the Vite starter; the interactive safety map is scheduled for Phase 5.
+Phases 1 and 2 are complete: project configuration, graph models/data, runtime validation, deterministic adjacency, Tarjan low-link analysis, and a strategy-injected application service. The React page is the Vite starter; the interactive map is scheduled for Phase 5.
 
 ## Run locally
 
@@ -27,7 +27,7 @@ npm.cmd run lint
 
 Use npm.cmd test for Vitest watch mode.
 
-The Phase 1 gate passed: 91 tests across two files, the TypeScript/production build, and lint. See [verification evidence](docs/phase-1-evidence.md).
+The full gate passed: 149 tests across five files, the TypeScript/production build, and lint. This includes 58 Phase 2 cases and an independent check across all 1,099 simple graphs with 1..5 nodes. See [Phase 2 evidence](docs/phase-2-evidence.md) and the earlier [Phase 1 evidence](docs/phase-1-evidence.md).
 
 ## Architecture
 
@@ -35,6 +35,11 @@ The Phase 1 gate passed: 91 tests across two files, the TypeScript/production bu
 - src/domain/models/ValidationResult.ts: structured errors and a discriminated result.
 - src/domain/validation/GraphValidator.ts: stateless validation with no React dependencies.
 - src/data/createFestivalArchipelago.ts: fresh eight-node, nine-edge demo data.
+- src/domain/models/AdjacencyIndex.ts and AnalysisResult.ts: readonly graph-index and traversal-result contracts.
+- src/domain/graph/SortedAdjacencyBuilder.ts: ASCII-sorted roots/neighbors with original edge IDs.
+- src/domain/contracts/GraphAnalyzer.ts: the small Strategy interface.
+- src/domain/algorithms/TarjanLowLinkAnalyzer.ts: stateless DFS across all components.
+- src/application/AnalysisService.ts and LoadResult.ts: validation-first orchestration and success/failure results.
 - src/tests/: validation boundaries, graph integrity, non-mutation, repeatability, and independent factory data.
 
 React, TypeScript, Vite, Tailwind, Vitest, and React Testing Library dependencies are installed. Vite is configured with React/Tailwind and Vitest's Node environment. Component/browser testing is part of Phase 5.
@@ -54,5 +59,27 @@ The engine limits apply: 1..12 nodes and 0..20 undirected edges. Disconnected gr
 - [Architecture, UML, and sequences](docs/design.md)
 - [Actual requests and implementation brief](docs/ai-prompts.md)
 - [Phase 1 verification evidence](docs/phase-1-evidence.md)
+- [Phase 2 implementation and SOLID boundaries](docs/phase-2-design.md)
+- [Phase 2 verification evidence](docs/phase-2-evidence.md)
 
-Expected DFS values and critical IDs are documentation-only at this checkpoint. The later analyzer will calculate them from graph input.
+Expected DFS values remain in documentation/tests only. Production analysis calculates discovery/low values, component count, bridges, and articulations from graph input.
+
+## Using the analysis service
+
+```ts
+import { AnalysisService } from './src/application/AnalysisService'
+import { createFestivalArchipelago } from './src/data/createFestivalArchipelago'
+import { TarjanLowLinkAnalyzer } from './src/domain/algorithms/TarjanLowLinkAnalyzer'
+
+const service = new AnalysisService(new TarjanLowLinkAnalyzer())
+const load = service.prepare(createFestivalArchipelago())
+if (load.ok) {
+  // load.result.nodes contains parent/discovery/low for every island.
+  // load.result.bridgeIds is ['CD', 'EG', 'GH'] for the original demo.
+  // load.result.articulationIds is ['C', 'D', 'E', 'G'].
+} else {
+  // load.errors identifies invalid graph fields; no partial result is returned.
+}
+```
+
+Replay events and immutable snapshots are Phase 3. Step/Run/Reset are Phase 4.

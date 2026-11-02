@@ -1,5 +1,7 @@
 # Treasure-Island Bridge Safety Map: UML and sequence design
 
+Implementation status: Phases 1 and 2 are complete. These diagrams show the final architecture. The current AnalysisResult contains the calculated node table, discovery order, components, tree edges, and sorted critical IDs. Phase 3 adds the illustrated replay envelope and snapshots to the same analyzer/service boundary. See phase-2-design.md and phase-2-evidence.md.
+
 This design follows the finalized interview plan: React + TypeScript + Vite, Tailwind CSS, native SVG, React useReducer, Vitest, and React Testing Library. Calculation and replay are local.
 
 The diagrams describe implementation responsibilities. A box marked "pure function module" is a TypeScript function/module; ReplayController is a React hook. Only the analyzer strategy and injected AnalysisService need class-style construction.

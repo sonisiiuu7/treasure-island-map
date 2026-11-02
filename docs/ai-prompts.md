@@ -33,4 +33,16 @@ The following constraints guided this implementation; this is a summary of the b
 
 The validator uses new Sets/Maps on every call and exposes no graph on failure. Serialized sorted endpoint pairs avoid ambiguous keys for IDs containing hyphens or underscores. Every array slot is inspected, including holes in sparse arrays.
 
-See [verification evidence](phase-1-evidence.md) for actual outcomes. Bridge/articulation results remain manually documented until the Phase 2 analyzer is implemented.
+See [Phase 1 evidence](phase-1-evidence.md) for the original checkpoint.
+
+## Phase 2 request and implementation
+
+Actual user request:
+
+> keep in mind the architecture and complete phase 2 with all the tests
+
+The assistant implemented sorted adjacency, the GraphAnalyzer interface, a stateless Tarjan strategy, and AnalysisService using constructor injection. The service validates the complete graph before indexing or analysis and returns no graph/result on failure.
+
+The implementation brief preserved the same ASCII ordering, global discovery clock, low-link rules, root distinction, original edge IDs, and domain/application boundaries discussed in the design. Replay instrumentation remains Phase 3.
+
+Verification used the hand-derived reference table, focused equality/root/component/permutation tests, and an independent edge/node-removal oracle over all 1,099 small graphs with up to five nodes. All 58 new tests and the full 149-test suite passed; build and lint passed. See [Phase 2 evidence](phase-2-evidence.md).
