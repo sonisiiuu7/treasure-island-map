@@ -1,0 +1,85 @@
+classDiagram
+    direction TB
+
+    class Island {
+        <<readonly value>>
+        +string id
+        +string name
+        +number x
+        +number y
+    }
+    class Bridge {
+        <<readonly value>>
+        +string id
+        +string source
+        +string target
+    }
+    class Graph {
+        <<readonly model>>
+        +Island[] nodes
+        +Bridge[] edges
+    }
+    class GraphValidator {
+        <<pure function module>>
+        +validate(graph) ValidationResult
+    }
+    class SortedAdjacencyBuilder {
+        <<pure function module>>
+        +build(validGraph) AdjacencyIndex
+    }
+    class AdjacencyIndex {
+        <<readonly model>>
+        +string[] nodeIds
+        +NeighborMap neighbors
+    }
+    class GraphAnalyzer {
+        <<interface>>
+        +analyze(adjacency) AnalysisResult
+    }
+    class TarjanLowLinkAnalyzer {
+        +analyze(adjacency) AnalysisResult
+    }
+    class AnalysisService {
+        <<application service>>
+        -GraphAnalyzer analyzer
+        +AnalysisService(analyzer)
+        +prepare(graph) LoadResult
+    }
+    class AnalysisResult {
+        <<readonly model>>
+        +TraversalSnapshot initialSnapshot
+        +ReplayEvent[] events
+        +TraversalSnapshot finalSnapshot
+    }
+    class ReplayEvent {
+        <<discriminated union>>
+        +EventType type
+        +EventFocus focus
+        +string message
+        +EventDetails details
+        +TraversalSnapshot snapshot
+    }
+    class TraversalSnapshot {
+        <<deeply readonly model>>
+        +NodeStateMap nodes
+        +EdgeStateMap edges
+        +number componentCount
+        +string[] bridgeIds
+        +string[] articulationIds
+    }
+
+    Graph "1" *-- "1..12" Island : nodes
+    Graph "1" *-- "0..20" Bridge : edges
+    GraphValidator ..> Graph : validates completely
+    SortedAdjacencyBuilder ..> Graph : reads validated input
+    SortedAdjacencyBuilder ..> AdjacencyIndex : builds sorted index
+    GraphAnalyzer <|.. TarjanLowLinkAnalyzer : implements
+    GraphAnalyzer ..> AdjacencyIndex : accepts
+    GraphAnalyzer ..> AnalysisResult : returns
+    AnalysisService --> GraphAnalyzer : constructor injection
+    AnalysisService ..> GraphValidator : validates first
+    AnalysisService ..> SortedAdjacencyBuilder : builds only if valid
+    AnalysisService ..> AnalysisResult : returns on success
+    AnalysisResult "1" *-- "1..*" ReplayEvent : ordered history
+    ReplayEvent "1" --> "1" TraversalSnapshot : state after event
+    AnalysisResult --> TraversalSnapshot : initial and final views

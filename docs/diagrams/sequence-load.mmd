@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    actor Volunteer
+    participant UI as React UI
+    participant Controller as ReplayController
+    participant Service as AnalysisService
+    participant Validator as GraphValidator
+    participant Builder as SortedAdjacencyBuilder
+    participant Analyzer as GraphAnalyzer
+    participant Reducer as replayReducer
+
+    Note over UI,Controller: Startup shows the original demo, unvisited; cursor = -1
+    Volunteer->>UI: Load My Archipelago
+    UI->>Controller: load(fresh demo graph)
+    Controller->>Service: prepare(graph)
+    Service->>Validator: validate(graph)
+
+    alt Graph is invalid
+        Validator-->>Service: ValidationResult with identifiable errors
+        Service-->>Controller: LoadResult failure(errors)
+        Note over Builder,Analyzer: Adjacency building and DFS are not called
+        Controller->>Reducer: LOAD_FAILURE(errors)
+        Reducer-->>Controller: ERROR; graph/result cleared; cursor = -1
+        Controller-->>UI: Empty analysis view and validation errors
+        UI-->>Volunteer: Show errors with no stale results
+    else Complete graph is valid
+        Validator-->>Service: Valid
+        Service->>Builder: build(validGraph)
+        Builder-->>Service: Sorted node IDs and neighbor/edge entries
+        Service->>Analyzer: analyze(adjacency)
+        Note over Analyzer: Injected TarjanLowLinkAnalyzer traverses all components
+        Note over Analyzer: One global clock; deterministic events and independent snapshots
+        Analyzer-->>Service: AnalysisResult(initialSnapshot, events, finalSnapshot)
+        Service-->>Controller: LoadResult success(graph, result)
+        Controller->>Reducer: LOAD_SUCCESS(graph, result)
+        Reducer-->>Controller: READY; prepared history; cursor = -1
+        Controller-->>UI: Initial snapshot and enabled replay controls
+        UI-->>Volunteer: Render unvisited map, empty values, and no final-answer leak
+    end

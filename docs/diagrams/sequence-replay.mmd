@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    actor Volunteer
+    participant UI as React UI
+    participant Controller as ReplayController
+    participant Reducer as replayReducer
+    participant Selectors as replaySelectors
+
+    Note over Controller,Selectors: Precondition: valid graph loaded; N events; cursor = -1
+    Note over Controller,Selectors: Step and Run to End use stored events; DFS is not called
+
+    Volunteer->>UI: Step
+    UI->>Controller: step()
+    Controller->>Reducer: STEP
+    Reducer-->>Controller: cursor = min(cursor + 1, N - 1)
+    Controller->>Selectors: selectView(newState)
+    Selectors-->>Controller: current event and its snapshot
+    Controller-->>UI: Shared ReplayView
+    UI-->>Volunteer: Map, focus, explanation, table, and summary update together
+
+    Volunteer->>UI: Run to End
+    UI->>Controller: runToEnd()
+    Controller->>Reducer: RUN_TO_END
+    Reducer-->>Controller: cursor = N - 1; status = COMPLETED
+    Controller->>Selectors: selectView(newState)
+    Selectors-->>Controller: Final event, snapshot, and retained full history
+    Controller-->>UI: Shared final ReplayView
+    UI-->>Volunteer: Show final critical items and inspectable history
+
+    Volunteer->>UI: Step after completion
+    UI->>Controller: step()
+    Controller->>Reducer: STEP
+    Reducer-->>Controller: Same final cursor; no change
+
+    Volunteer->>UI: Reset
+    UI->>Controller: reset()
+    Controller->>Reducer: RESET
+    Reducer-->>Controller: Original demo; EMPTY; cursor = -1; result/errors cleared
+    Controller->>Selectors: selectView(newState)
+    Selectors-->>Controller: Original graph and pre-traversal view
+    Controller-->>UI: Shared initial ReplayView
+    UI-->>Volunteer: Show original map and Load control
+
+    Note over UI,Selectors: Reset matches startup; Load prepares the next identical run

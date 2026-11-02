@@ -1,0 +1,75 @@
+classDiagram
+    direction TB
+
+    class ReactPresentation {
+        <<React components>>
+        +render(view)
+    }
+    class ReplayController {
+        <<useReplayController hook>>
+        +load(graph)
+        +step()
+        +runToEnd()
+        +reset()
+    }
+    class AnalysisService {
+        <<application service>>
+        +prepare(graph) LoadResult
+    }
+    class ReplayAction {
+        <<discriminated union>>
+        LOAD_SUCCESS
+        LOAD_FAILURE
+        STEP
+        RUN_TO_END
+        RESET
+    }
+    class ReplayReducer {
+        <<pure function>>
+        +reduce(state, action) ReplayState
+    }
+    class ReplayState {
+        <<discriminated union>>
+        +Graph originalDemoGraph
+        +Graph currentGraph
+        +AnalysisResult result
+        +number eventIndex
+        +ReplayStatus status
+        +ValidationError[] errors
+    }
+    class ReplaySelectors {
+        <<pure functions>>
+        +selectView(state) ReplayView
+    }
+    class ReplayView {
+        <<readonly derived model>>
+        +Graph graph
+        +TraversalSnapshot snapshot
+        +ReplayEvent currentEvent
+        +ReplayEvent[] history
+        +ControlAvailability controls
+    }
+    class AnalysisResult {
+        <<domain model>>
+    }
+    class TraversalSnapshot {
+        <<domain model>>
+    }
+    class FestivalGraphFactory {
+        <<pure function>>
+        +createFestivalArchipelago() Graph
+    }
+
+    ReactPresentation --> ReplayController : user interactions
+    ReactPresentation --> ReplayView : renders one shared view
+    ReactPresentation ..> FestivalGraphFactory : startup composition
+    ReplayController --> AnalysisService : Load only
+    ReplayController ..> ReplayAction : dispatches
+    ReplayController --> ReplayReducer : useReducer
+    ReplayController --> ReplaySelectors : derives current view
+    ReplayReducer ..> ReplayAction : handles
+    ReplayReducer ..> ReplayState : returns new state
+    ReplayState --> AnalysisResult : optional prepared history
+    ReplaySelectors ..> ReplayState : reads
+    ReplaySelectors ..> ReplayView : derives
+    ReplayView --> TraversalSnapshot : selected state

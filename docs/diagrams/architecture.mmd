@@ -1,0 +1,43 @@
+flowchart TB
+    App["App.tsx<br/>Composition root"]
+
+    subgraph Presentation["Presentation: React and native SVG"]
+        Controller["useReplayController<br/>load / step / runToEnd / reset"]
+        Panels["IslandMap / ReplayControls / EventPanel<br/>NodeTable / SafetySummary"]
+    end
+
+    subgraph Application["Application: orchestration and replay"]
+        Service["AnalysisService.prepare(graph)"]
+        Reducer["replayReducer<br/>Pure state transitions"]
+        Selectors["replaySelectors<br/>One selected ReplayView"]
+    end
+
+    subgraph Domain["Domain: pure TypeScript"]
+        Validate["GraphValidator"]
+        Build["SortedAdjacencyBuilder"]
+        Contract["GraphAnalyzer interface"]
+        Tarjan["TarjanLowLinkAnalyzer"]
+        Models["Graph / AnalysisResult<br/>ReplayEvent / TraversalSnapshot"]
+    end
+
+    Factory["createFestivalArchipelago()<br/>Fresh original demo data"]
+
+    App --> Controller
+    App --> Panels
+    App --> Factory
+    App -->|"injects analyzer into service"| Service
+    App -->|"constructs concrete strategy"| Tarjan
+    Controller -->|"prepare on Load only"| Service
+    Controller -->|"dispatch actions"| Reducer
+    Controller -->|"derive visible state"| Selectors
+    Selectors -->|"same ReplayView"| Panels
+    Service --> Validate
+    Service --> Build
+    Service --> Contract
+    Tarjan -.->|"implements"| Contract
+    Validate --> Models
+    Build --> Models
+    Tarjan --> Models
+    Reducer --> Models
+    Selectors --> Models
+    Factory --> Models
