@@ -11,6 +11,14 @@ npm.cmd run lint
 npm.cmd run dev -- --host 127.0.0.1 --port 5175 --strictPort
 ```
 
+For Windows Command Prompt, replace Set-Location with:
+
+```cmd
+cd /d "C:\Users\UDAY\Documents\Codex\2026-11-02\x20\outputs\treasure-island-map"
+```
+
+Run verification commands sequentially. The Phase 5 gate passed 293 tests, but the later audit reproduced a default five-second timeout in the exhaustive UI test. A diagnostic run with npm.cmd run test:run -- --testTimeout=15000 --maxWorkers=1 passed all 293. This remains a verification repair task; the larger diagnostic budget is not a completed fix.
+
 Open [http://127.0.0.1:5175/](http://127.0.0.1:5175/). The dev server runs until Ctrl+C. Dependencies are already installed in this checkout; npm.cmd ci is for a clean installation.
 
 ## Five-minute walkthrough
@@ -32,14 +40,16 @@ Use Tab to move between native controls; Enter activates a focused button and Sp
 - Domain: validation, deterministic DFS, typed event payloads, and independent deeply frozen snapshots.
 - Application: AnalysisService receives the GraphAnalyzer Strategy; reducer/selectors manage replay without running DFS.
 - Presentation: the hook connects callbacks to React; all components consume one selected ReplayView.
-- Correctness: 293 passing cases include an independent removal-based oracle over 1,099 small graphs and per-event transition checks over 75 small graphs.
+- Correctness: the 293 cases include an independent removal-based oracle over 1,099 small graphs and per-event transition checks over 75 small graphs. State the current timeout qualification when presenting verification.
 - Testing boundaries: invalid-coordinate and duplicate-ID failures are injected in integration tests, verifying stale content clears and valid loads recover. Testing controls are not part of the volunteer interface.
 - Complexity: the DFS core is O(V+E); sorting and copying full event snapshots add documented overhead, appropriate for at most 12 nodes and 20 edges.
 
 ## If asked about AI assistance
 
-Show the actual submitted requests and decisions in ai-prompts.md, along with the independent reference table and verification evidence. Explain that tests caught accessible-name defects and browser review caught layout collisions; both were corrected before the checkpoint.
+Start with [the refined engineering prompt portfolio](prompts/refined-engineering-prompts.md) and explain how each prompt constrains a concrete risk. Identify it as a retrospective refinement; detailed submitted Phase 3–5 requests remain linked in [the development record](ai-prompts.md).
 
-A small live change could adjust a legend label or explanatory copy in the presentation layer, then rerun the relevant checks. Numerical behavior belongs in the analyzer and should be changed only with corresponding independent expectations.
+Use [the interview discussion guide](interview-discussion.md) for LLD, algorithm, complexity, and AI-contribution questions. Explain why the analyzer is injected, why a state union helps, why snapshots require copied nested values, and why > versus >= changes the result. Show actual observed corrections and the independent verification method.
+
+For live-change rehearsal, the portfolio proposes an event-type history filter. Keep filtering outside the domain, preserve the selected snapshot/cursor, and explicitly handle Reset. This exercise has not been implemented; demonstrate only work that has actually been completed.
 
 See [Phase 5 evidence](phase-5-evidence.md) for the executed checks and screenshots. The browser evidence uses Chrome with mobile viewport emulation; no physical-phone or cross-browser verification is claimed.

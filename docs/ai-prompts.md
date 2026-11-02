@@ -1,96 +1,96 @@
-# AI-assisted development record
+# AI prompting strategy and engineering decisions
 
-Actual user messages and the assistant's implementation brief are recorded separately. No separate coding-tool session or unexecuted verification is claimed.
+The development approach separated runtime validation, deterministic graph analysis, explanatory history, replay state, and rendering into five checkpoints. AI assistance contributed to implementation, tests, documentation, and prompt drafting. The engineering controls were explicit contracts, independent correctness checks, preserved regression assertions, and review of the running interface.
 
-## Actual user requests
+Use the [refined engineering prompt portfolio](prompts/refined-engineering-prompts.md) to present this approach. Its prompts are retrospective refinements written during interview preparation, not verbatim records of earlier submissions. They replace the basic request excerpts in this presentation document. The detailed submitted [Phase 3](prompts/phase-3-request.md), [Phase 4](prompts/phase-4-request.md), and [Phase 5](prompts/phase-5-request.md) requests remain available as source records.
 
-> so let's build phase 1.....tell me the exact steps to follow
+## Tools and contribution
 
-The user subsequently installed the Vite React/TypeScript scaffold, Tailwind, Vitest, React Testing Library, and jsdom.
+The development conversation used the OpenAI assistant and the Codex desktop workspace. Local commands inspected and changed the repository, ran Vitest, TypeScript/Vite, and Oxlint, and saved Git checkpoints. React Testing Library and jsdom exercised the React components. A disposable Chrome profile controlled through DevTools supplied actual browser screenshots and measurements.
 
-> what link i need to give you so that you complete phase 1 yourself?
+The AI assistance was substantial: it helped articulate architecture, implement code, propose and implement tests, investigate failures, and prepare supporting documentation. The prompt portfolio is also AI-assisted. No use of GitHub Copilot, Claude, another coding assistant, or an external coding session is claimed.
 
-The assistant found the existing local project and completed its Phase 1 code and checks.
+The independently structured oracle is independent of the production algorithm: it removes edges/nodes and recounts components with flood fill. This is a different verification method, not a claim that its code or the reference table was created without AI assistance.
 
-## Assistant's implementation brief
+## Prompting method
 
-The following constraints guided this implementation; this is a summary of the brief rather than a claim that it was submitted to another assistant:
+Each implementation prompt should establish six things:
 
-- Follow the agreed lightweight Clean Architecture and five phases.
-- Complete local models, graph data, validation, configuration, and focused tests.
-- Keep domain code independent of React, rendering, and future replay state.
-- Use readonly models and fresh graph objects.
-- Validate unknown runtime input completely before exposing a typed graph.
-- Return structured errors identifying affected fields and items.
-- Enforce counts, IDs, names, finite coordinates, endpoints, self-loop rejection, and unordered connection uniqueness.
-- Collect independent errors and safely skip checks with invalid prerequisites.
-- Test boundaries, materially different failures, simultaneous errors, non-mutation, repeatability, and factory independence.
-- Keep the hand-derived oracle outside production code.
-- Preserve analyzer/replay/UI phase boundaries.
-- Verify the installed Vitest suite, TypeScript/build, and Oxlint.
+1. **Current context:** existing contracts, source documents, completed checkpoint, and regression assertions to preserve.
+2. **Responsibility boundary:** which layer owns the change and which dependencies are permitted.
+3. **Observable invariants:** numerical rules, ordering, ownership, and error behavior that determine correctness.
+4. **Failure examples:** a concrete counterexample that would expose a plausible incorrect implementation.
+5. **Verification:** checks whose expectations do not simply repeat the implementation.
+6. **Completion evidence:** actual command results, limitations, documentation updates, and the local checkpoint.
 
-## Decisions
+A prompt is useful when it constrains an observable behavior. Naming a design pattern alone does not establish that behavior. For example, dependency injection is supported by AnalysisService accepting GraphAnalyzer and by tests that inject a substitute and confirm invalid input never reaches it.
 
-The validator uses new Sets/Maps on every call and exposes no graph on failure. Serialized sorted endpoint pairs avoid ambiguous keys for IDs containing hyphens or underscores. Every array slot is inspected, including holes in sparse arrays.
+## Phase decisions and evidence
 
-See [Phase 1 evidence](phase-1-evidence.md) for the original checkpoint.
+| Phase | Engineering concern expressed in the prompt | Concrete result and evidence |
+| --- | --- | --- |
+| 1 — contracts and validation | Treat runtime input as unknown; expose Graph only after complete validation; identify errors without mutating caller data. | Readonly graph models, fresh demo factory, structured ValidationResult; [91 tests](phase-1-evidence.md). |
+| 2 — low-link analysis | Sort IDs explicitly; separate DFS rules from layout; inject the analyzer; distinguish strict bridge and non-root articulation comparisons. | Sorted adjacency, stateless Tarjan strategy, AnalysisService; [58 new tests and removal-based oracle over 1,099 graphs](phase-2-evidence.md). |
+| 3 — event semantics | Generate explanations during DFS; define event order; freeze independent post-event snapshots; preserve previous numerical results. | Typed events, immutable snapshots, exact traces and transition checks; [41 new tests](phase-3-evidence.md). |
+| 4 — replay lifecycle | Model valid states with a discriminated union; move only a cursor; preserve an owned original graph; clear failures atomically. | Pure reducer/selectors and injected React hook; [71 new tests](phase-4-evidence.md). |
+| 5 — synchronized presentation | Give every panel one selected ReplayView; render recorded proof; distinguish provisional findings; preserve critical and current markers together. | Native SVG and React panels, all-event integration checks, real browser captures; [32 new tests](phase-5-evidence.md). |
 
-## Phase 2 request and implementation
+The original five-phase gates reached 91, 149, 190, 261, and 293 tests respectively. These are historical checkpoint results. Current verification qualifications appear below.
 
-Actual user request:
+## LLD choices that can be defended
 
-> keep in mind the architecture and complete phase 2 with all the tests
+**Responsibility and dependency direction.** Domain code owns graph validation/indexing, DFS, and event/snapshot models. Application code owns preparation and replay transitions/selectors. Presentation composes the concrete service and renders the selected state. Domain modules import no React/application/test code.
 
-The assistant implemented sorted adjacency, the GraphAnalyzer interface, a stateless Tarjan strategy, and AnalysisService using constructor injection. The service validates the complete graph before indexing or analysis and returns no graph/result on failure.
+**Strategy and Dependency Inversion.** AnalysisService receives GraphAnalyzer rather than constructing TarjanLowLinkAnalyzer. App selects the concrete strategy. A replacement must preserve the documented ordering, numerical values, event contract, and snapshot semantics; a matching TypeScript signature is not sufficient behavioral substitutability.
 
-The implementation brief preserved the same ASCII ordering, global discovery clock, low-link rules, root distinction, original edge IDs, and domain/application boundaries discussed in the design. Replay instrumentation remains Phase 3.
+**Small interfaces and ordinary functions.** GraphAnalyzer needs one analyze method. The React hook needs only the service's prepare method. Validation and adjacency construction stay functions because separate interface hierarchies would add little value here.
 
-Verification used the hand-derived reference table, focused equality/root/component/permutation tests, and an independent edge/node-removal oracle over all 1,099 small graphs with up to five nodes. All 58 new tests and the full 149-test suite passed; build and lint passed. See [Phase 2 evidence](phase-2-evidence.md).
+**State modeling.** EMPTY/READY/RUNNING/COMPLETED/ERROR encode the replay lifecycle. ERROR carries errors and no current graph/result; READY fixes the cursor at -1. The discriminant constrains data combinations, while reducer logic maintains active cursor bounds. It does not make arbitrary numeric cursor values impossible at the type level.
 
-## Phase 3 request and implementation
+**Ownership.** readonly protects TypeScript callers at compile time. Copies and nested Object.freeze calls protect captured graph/snapshot values at runtime. The reducer and hook capture successful graph values at their boundaries; Reset always uses the saved original. The validator itself returns valid input by reference and does not freeze caller-owned objects.
 
-The actual user request began:
+See [the architecture and UML](design.md) and [the replay contract](replay-controller.md) for the actual implementation boundaries.
 
-> Complete Phase 3 of my Treasure-Island Bridge Safety Map project.
+## Algorithm reasoning behind the prompts
 
-The complete submitted prompt is preserved in [prompts/phase-3-request.md](prompts/phase-3-request.md).
+For tree parent u and child v, low[v] > discovery[u] means v's subtree cannot return to u or an ancestor without the tree edge. Removing that edge therefore disconnects it.
 
-The implementation kept calculation and replay values in the domain, preserved GraphAnalyzer and AnalysisService injection, and instrumented the existing DFS. AnalysisSummary keeps all earlier values; AnalysisResult adds initialSnapshot/events/finalSnapshot. Every snapshot owns copied and frozen records/arrays. Event payloads explicitly show negative outcomes and unchanged numerical updates.
+Equality has a different consequence for a non-root articulation: low[v] = discovery[u] permits a route back to u, but no route to an ancestor of u. Removing u still separates that subtree. A root requires at least two DFS-tree children; graph degree is not the test.
 
-All 149 original cases were retained, with summary projections and extended mocks preserving their exact numerical assertions. Forty-one new cases check exact traces, proofs, runtime mutation rejection, deterministic histories, and independent per-event transitions over all 75 simple graphs up to four nodes.
+The demo makes this visible. F reaches D, propagating low[F] = 3 back to E, so low[E] changes 4 → 3. DE lies in the D–E–F loop and is not a bridge: 3 > 3 is false. D is still an articulation: 3 >= 3 is true. Root A has graph degree two but one DFS-tree child, so it is not an articulation.
 
-The first final build found one unused test type import. It was removed, and the full suite, build, and lint were rerun successfully: 190 tests passed, build passed, lint passed without warnings. See [Phase 3 evidence](phase-3-evidence.md). Replay reducer/controller/UI implementation remains in later phases.
+The [reference graph](reference-graph.md) and focused tests make these explanations checkable. Production code never imports that oracle.
 
-## Phase 4 request and implementation
+## Trade-offs and limits
 
-The actual user request began:
+| Decision | Reason in this project | Cost or extension boundary |
+| --- | --- | --- |
+| Recursive DFS | Direct mapping to discovery, child completion, return, and classification; recursion depth is bounded by 12 nodes. | A substantially larger engine may need an explicit stack. |
+| Complete immutable event snapshots | Every panel can select the same already-computed state; earlier history cannot be overwritten. | O(K(V+E)) copied snapshot data for K events, plus sorting/freezing overhead. This is not an O(V+E)-space history implementation. |
+| Sorted adjacency | Stable traversal regardless of source order, names, or layout. | Sorting adds work beyond the O(V+E) DFS core. |
+| Precompute on Load, replay by cursor | Step/Run/Reset/rerenders never execute DFS. | Upfront preparation and stored history; intermediate selectors also copy a history prefix. |
+| Native SVG and local React state | Small fixed graph, accessible text/line patterns, no external map service, and no global store required. | The responsive demo layout is not a general graph-label collision solver. |
 
-> Complete Phase 4 of my Treasure-Island Bridge Safety Map project.
+## Actual iterations
 
-The full submitted prompt is preserved in [prompts/phase-4-request.md](prompts/phase-4-request.md).
+These are observed development changes, not invented examples of AI mistakes.
 
-The implementation kept lifecycle state, reducer, and selectors in the application layer and React useReducer/callbacks in the presentation hook. The prepare service is injected through its narrow public method; existing domain algorithms and all 190 prior test assertions were preserved without source changes.
+| Observation | Response | Evidence |
+| --- | --- | --- |
+| The initial UML validation argument was too narrow for runtime input. | Implement validation(input: unknown) with a typed success result. | [Plan refinement](implementation-plan.md) and validator tests. |
+| Phase 3's first final build found an unused test type import. | Remove the unused import and rerun the checks. | [Phase 3 evidence](phase-3-evidence.md). |
+| UI tests exposed SVG/page accessible-name defects. | Separate SVG title/description associations and provide the intended page heading name. | [Phase 5 evidence](phase-5-evidence.md). |
+| Browser review exposed table height and map text collisions. | Tighten spacing and refine display projection/name/edge-label placement; refresh actual captures. | [Browser results](browser-check-results.json) and screenshots linked from Phase 5 evidence. |
+| The later requirements audit found a five-second timeout in the exhaustive 54-event UI test. | Reproduce it alone, then diagnose with a larger timeout and one worker. A permanent fix remains pending. | Commands and results below. |
 
-Graph copies protect original/reset data and capture successful values before React queues an action. One immutable ReplayView exposes only the selected snapshot and replayed history. StrictMode does not trigger analysis; only explicit load calls do.
+The last audit obtained 292 passes and one timeout with the default suite; the focused 54-event test also exceeded five seconds. The diagnostic command below passed all 293 tests in 12 files:
 
-The application gate passed 49 new tests, followed by 22 hook tests using file-scoped jsdom. All 261 tests passed together; build and lint passed without warnings. There were no implementation/test failures during this phase. The actual invalid-coordinate and duplicate-ID recovery checks, batched updates, and repeatability evidence are in [phase-4-evidence.md](phase-4-evidence.md).
+```cmd
+npm.cmd run test:run -- --testTimeout=15000 --maxWorkers=1
+```
 
-## Phase 5 request and implementation
+Build and lint passed in that audit. The diagnostic run does not establish that the default timeout issue has been fixed. This documentation revision changes no tests or application behavior. The [verification repair prompt](prompts/refined-engineering-prompts.md#verification-review-prompt) is a proposed next task.
 
-The actual request began:
+## Presenting the work
 
-> Complete Phase 5 of my Treasure-Island Bridge Safety Map project.
-
-The complete submitted text is preserved in [prompts/phase-5-request.md](prompts/phase-5-request.md). This is the user's supplied implementation request, not a reconstructed prompt.
-
-The implementation preserved the domain, application, and existing controller sources. App now composes the injected service/controller and passes one ReplayView to the native SVG map, controls, current event, expandable history, table, and safety summary. EventProof formats recorded typed values and outcomes without calculating traversal classifications.
-
-The local-development guidance in the Sites skill was used for preview/check/teardown only. Work remained in the existing checkout; nothing was registered, uploaded, or published. No separate AI coding session or delegated implementation is claimed.
-
-Twenty-two component cases and ten application cases were added. Existing test assertions were retained. The application test traverses all 54 events and compares every visible table row, edge state, current focus, findings, and history boundary against the selected snapshot. Two invalid-load scenarios use injected real validation failures after completion and verify stale output clearing followed by recovery.
-
-Focused UI tests caught accessible-name issues in the SVG description and page heading; both were fixed. Browser review caught table height and map text collisions. Compact spacing, responsive coordinate projection, name placement, and bridge-label offsets were refined, then actual screenshots and geometry measurements were refreshed.
-
-The local browser was driven with Chrome DevTools using Node's built-in WebSocket, without adding dependencies. A disposable headless profile was used after the default browser configuration failed in the restricted execution environment. Real browser Space input advanced Step. The recorded proofs show F → E at event 21, DE at 39, and D at 40; completion shows all expected final values and retains all 54 entries.
-
-The final checks passed: 32 focused UI tests, 293 complete tests, production build, and lint. Desktop/mobile browser captures and machine-readable results are saved in [Phase 5 evidence](phase-5-evidence.md). Browser scope is Chrome plus viewport emulation, with error recovery tested in React integration. The [walkthrough](demo-walkthrough.md) explains local startup, the interview demonstration, architectural boundaries, and the AI assistance record.
+Use the [interview discussion guide](interview-discussion.md) to connect each claim to code and evidence. Explain the AI contribution clearly, recompute the numerical examples yourself, and rehearse a focused change before describing yourself as ready for live modification. The refined live-change prompt is a rehearsal aid; it is not evidence that such a change has already been performed.
