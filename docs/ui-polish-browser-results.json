@@ -1,0 +1,204 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.74",
+    "revision": "@d331de35ca8ab1358c7a17e4bd41627d55eaef51",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.25"
+  },
+  "url": "http://127.0.0.1:5177/",
+  "motion": {
+    "animation": "replay-reveal",
+    "duration": "0.22s",
+    "focus": "focus-settle",
+    "index": "0"
+  },
+  "reducedMotion": {
+    "animation": "none",
+    "focus": "none",
+    "transition": "0s"
+  },
+  "proofs": {
+    "returnFE": {
+      "type": "RETURN_CHILD",
+      "node": "E",
+      "edge": "EF",
+      "related": "F",
+      "index": 20,
+      "text": "Current inspection event\n21\nReturn from a child\nLow update · E\n4 → 3\nlow[E] = min(4, low[F] = 3) = 3\n\nReturn F -> E: low[E] = min(4, low[F] = 3) = 3 (4 -> 3)."
+    },
+    "classifyDE": {
+      "type": "CLASSIFY_EDGE",
+      "node": "D",
+      "edge": "DE",
+      "related": "E",
+      "index": 38,
+      "text": "Current inspection event\n39\nCheck a bridge\nNot a bridge · DE\n3 > 3 = false\nlow[E] > discovery[D]\n\nClassify DE: low[E] = 3 > discovery[D] = 3 is false; not a bridge. Non-root articulation test: 3 >= 3 is true."
+    },
+    "articulationD": {
+      "type": "ARTICULATION",
+      "node": "D",
+      "edge": "DE",
+      "related": "E",
+      "index": 39,
+      "text": "Current inspection event\n40\nMark an articulation island\nArticulation island · D\n3 ≥ 3 = true\nlow[E] ≥ discovery[D]\n\nMark non-root D as articulation: low[E] = 3 >= discovery[D] = 3 is true."
+    }
+  },
+  "desktop": {
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "documentWidth": 1351,
+    "title": "Treasure-Island Bridge Safety Map",
+    "status": "COMPLETED",
+    "panels": [
+      {
+        "name": "Your archipelago",
+        "top": 155,
+        "bottom": 493
+      },
+      {
+        "name": "Island inspection values",
+        "top": 507,
+        "bottom": 761
+      },
+      {
+        "name": "Current inspection event",
+        "top": 156,
+        "bottom": 362
+      },
+      {
+        "name": "Safety findings",
+        "top": 362,
+        "bottom": 634
+      },
+      {
+        "name": "Inspection history",
+        "top": 634,
+        "bottom": 824
+      }
+    ],
+    "labelOverflow": [],
+    "nameLabelOverlaps": [],
+    "bridgeBadgeOverlaps": []
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "documentWidth": 390,
+    "title": "Treasure-Island Bridge Safety Map",
+    "status": "COMPLETED",
+    "panels": [
+      {
+        "name": "Your archipelago",
+        "top": 283,
+        "bottom": 883
+      },
+      {
+        "name": "Island inspection values",
+        "top": 1425,
+        "bottom": 1705
+      },
+      {
+        "name": "Current inspection event",
+        "top": 897,
+        "bottom": 1106
+      },
+      {
+        "name": "Safety findings",
+        "top": 1120,
+        "bottom": 1411
+      },
+      {
+        "name": "Inspection history",
+        "top": 1719,
+        "bottom": 1990
+      }
+    ],
+    "labelOverflow": [],
+    "nameLabelOverlaps": [],
+    "bridgeBadgeOverlaps": []
+  },
+  "smallMobile": {
+    "viewport": {
+      "width": 320,
+      "height": 760
+    },
+    "documentWidth": 320,
+    "title": "Treasure-Island Bridge Safety Map",
+    "status": "COMPLETED",
+    "panels": [
+      {
+        "name": "Your archipelago",
+        "top": 283,
+        "bottom": 787
+      },
+      {
+        "name": "Island inspection values",
+        "top": 1363,
+        "bottom": 1643
+      },
+      {
+        "name": "Current inspection event",
+        "top": 801,
+        "bottom": 1044
+      },
+      {
+        "name": "Safety findings",
+        "top": 1058,
+        "bottom": 1349
+      },
+      {
+        "name": "Inspection history",
+        "top": 1657,
+        "bottom": 1928
+      }
+    ],
+    "labelOverflow": [],
+    "nameLabelOverlaps": [],
+    "bridgeBadgeOverlaps": []
+  },
+  "printable": {
+    "visible": "block",
+    "toolbar": "none",
+    "text": "Treasure Island · Festival field guide\n\nBridge Safety Summary\n\nCompleted inspection · 8 islands · 9 connections · 54 recorded events\n\nComponents\n1\nCritical bridges\nCD, EG, GH\nArticulation islands\nC, D, E, G\nCritical bridges\nCritical bridge · CD\n3 > 2 = true\nlow[D] > discovery[C]\nCritical bridge · EG\n6 > 4 = true\nlow[G] > discovery[E]\nCritical bridge · GH\n7 > 6 = true\nlow[H] > discovery[G]\nArticulation islands\nArticulation island · C\n3 ≥ 2 = true\nlow[D] ≥ discovery[C]\nArticulation island · D\n3 ≥ 3 = true\nlow[E] ≥ discovery[D]\nArticulation island · E\n6 ≥ 4 = true\nlow[G] ≥ discovery[E]\nArticulation island · G\n7 ≥ 6 = true\nlow[H] ≥ discovery[G]\nFinal traversal values\nID\tIsland\tParent\tDiscovery\tLow\nA\tAnchor Bay\t—\t0\t0\nB\tBuccaneer Bites\tA\t1\t0\nC\tCoral Stage\tB\t2\t0\nD\tDriftwood Dock\tC\t3\t3\nE\tEmber Market\tD\t4\t3\nF\tFirst Aid\tE\t5\t3\nG\tGames Grove\tE\t6\t6\nH\tHarmony Isle\tG\t7\t7\n\nA critical bridge disconnects part of the network when removed. An articulation island separates surviving islands when removed.\n\nDiscovery is the first-visit number. Low records the earliest discovery reachable through the DFS subtree and an alternate connection.\n\nThis report contains the completed graph inspection; it does not assess the physical condition of a crossing.",
+    "rows": 8,
+    "proofs": 7,
+    "width": 704,
+    "height": 1032,
+    "animation": "none"
+  },
+  "printActionPreservedReplay": {
+    "index": "53",
+    "history": 54,
+    "table": "ID\tIsland\tParent\tDisc.\tLow\tState\nA\tAnchor Bay\t—\t0\t0\tFinished\nB\tBuccaneer Bites\tA\t1\t0\tFinished\nC\tCoral Stage\tB\t2\t0\tFinished\nD\tDriftwood Dock\tC\t3\t3\tFinished\nE\tEmber Market\tD\t4\t3\tFinished\nF\tFirst Aid\tE\t5\t3\tFinished\nG\tGames Grove\tE\t6\t6\tFinished\nH\tHarmony Isle\tG\t7\t7\tFinished"
+  },
+  "printInvocations": 1,
+  "pdfPageCount": 1,
+  "resetPrint": "Treasure Island · Festival field guide\n\nBridge Safety Summary\n\nFinal report unavailable. Complete a valid inspection with Step or Run to End before printing.",
+  "errors": [],
+  "keyboardFocus": {
+    "name": "Load My Archipelago",
+    "outline": "solid",
+    "width": "2px",
+    "color": "rgb(36, 107, 82)"
+  },
+  "expandedHistory": {
+    "open": true,
+    "proof": "4 → 3",
+    "index": "53"
+  },
+  "mobileHelp": {
+    "left": 55,
+    "right": 295,
+    "width": 240,
+    "open": true
+  },
+  "allEventLayout": {
+    "eventsChecked": 108,
+    "issues": []
+  }
+}

@@ -53,3 +53,11 @@ Event entry fades/moves slightly over 220 ms; focus strokes settle over 320 ms. 
 SafetySummary provides Print summary, enabled only at completion. App also composes PrintSafetySummary with the same ReplayView. Its inline screen-hidden style keeps it out of the visible page; print CSS exposes it and hides the interactive dashboard. Final reports include sorted IDs, every recorded critical-item proof, and the final node table. Before completion or after failure/Reset it renders an incomplete notice without stale findings. Browser print/Save as PDF uses A4 styling; the original demo fits one page.
 
 See [reliability and optional-feature evidence](reliability-and-optionals.md) for actual checks and captures.
+
+## Visual refinement
+
+The presentation now uses a restrained charcoal/green system with 4–5 px corners, no panel shadows, stronger secondary text, tabular numeric values, and consistent 2 px keyboard focus. The desktop inspector is one surface divided into current event, findings, and history sections. Mobile preserves the existing section order with larger touch targets.
+
+The graph retains its original display projection, names, state patterns, focus overlays, and critical badges. Decorative waves/compass/shore layers were removed, and node/edge colors were refined for clarity. Current proof styling uses a quiet inset area and a single rule rather than another rounded card. Existing event handlers, models, replay, print, and reduced-motion behavior are unchanged.
+
+See [the UI audit and verification](ui-polish-evidence.md) for checks, limitations, and current screenshots.

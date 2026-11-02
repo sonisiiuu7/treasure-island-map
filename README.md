@@ -4,7 +4,7 @@ A local React + TypeScript application that lets a festival volunteer inspect an
 
 All five phases are complete. The interface includes the responsive native SVG map, Load/Step/Run to End/Reset controls, numerical event explanations, expandable history, traversal table, and safety summary.
 
-![Completed desktop interface](docs/screenshots/completed-desktop.png)
+![Completed desktop interface](docs/screenshots/ui-polish/completed-desktop.png)
 
 ## Run locally
 
@@ -28,7 +28,7 @@ npm.cmd run build
 npm.cmd run lint
 ```
 
-The current gate passed **303 tests in 13 files**, production build, and lint. The normal `npm.cmd run test:run` command passed twice consecutively (50.40 s and 43.52 s) without diagnostic flags.
+The current UI refinement passed **303 tests in 13 files** (13.36 s), production build, and lint using the normal commands. All existing tests were retained. See [UI refinement evidence and current captures](docs/ui-polish-evidence.md). The preceding reliability checkpoint also passed two consecutive normal runs.
 
 The 54-event tests retain all assertions. Cached/scoped queries avoid repeated full-page accessibility searches; two-worker execution limits contention; only the two exhaustive full-replay tests have a 20-second budget. Other tests keep the five-second default.
 
@@ -69,6 +69,7 @@ The engine accepts 1..12 nodes and 0..20 undirected edges, including disconnecte
 - [Event schema and emission rules](docs/event-schema.md)
 - [Replay/controller contract](docs/replay-controller.md)
 - [Presentation design and accessibility](docs/ui-design.md)
+- [UI refinement audit and verification](docs/ui-polish-evidence.md)
 - [Reliability fix and optional-feature evidence](docs/reliability-and-optionals.md)
 - [Development notes and AI use](docs/ai-prompts.md)
 - [Engineering prompt collection](docs/prompts/engineering-prompts.md)

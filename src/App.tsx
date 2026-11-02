@@ -33,7 +33,7 @@ export default function App({ analysisService, originalDemoGraph }: AppProps) {
       <header className="app-header">
         <div className="brand">
           <svg className="brand-mark" viewBox="0 0 44 44" aria-hidden="true">
-            <rect width="44" height="44" rx="13" fill="currentColor" />
+            <rect width="44" height="44" rx="7" fill="currentColor" />
             <circle cx="22" cy="22" r="13" fill="none" stroke="#b7d6c7" strokeWidth="1" />
             <path d="M27 12 L24 24 L13 31 L19 18 Z" fill="#f4e1ae" />
             <path d="M27 12 L24 24 L19 18 Z" fill="#fff9e9" />
@@ -41,12 +41,11 @@ export default function App({ analysisService, originalDemoGraph }: AppProps) {
           <div>
             <p className="eyebrow">Treasure Island · Festival field guide</p>
             <h1 aria-label="Treasure-Island Bridge Safety Map">Bridge Safety Map</h1>
-            <p className="subtitle">A festival connected. A plan you can explain.</p>
+            <p className="subtitle">Bridge and articulation-point analysis</p>
           </div>
         </div>
         <div className="header-status">
           <span className={`status-badge status-${view.status.toLowerCase()}`} role="status">{statusLabels[view.status]}</span>
-          <span className="header-note">Your original festival plan</span>
         </div>
       </header>
 

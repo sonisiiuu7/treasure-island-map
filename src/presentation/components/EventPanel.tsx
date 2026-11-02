@@ -22,7 +22,6 @@ export function EventPanel({ view }: { view: ReplayView }) {
           </div>
         ) : (
           <div className="event-welcome">
-            <span className="welcome-symbol" aria-hidden="true">⌁</span>
             <h3>{view.status === 'ERROR' ? 'Inspection unavailable' : view.status === 'READY' ? 'Ready for the first step' : 'Your inspection starts here'}</h3>
             <p>{view.status === 'ERROR'
               ? 'Correct the map errors, then load the plan again.'

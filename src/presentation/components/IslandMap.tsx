@@ -62,17 +62,11 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
       </desc>
       <defs>
         <pattern id={`sea-grid-${instance}`} width="24" height="24" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="0.9" fill="#b6cfca" opacity=".55" />
+          <circle className="map-grid-dot" cx="2" cy="2" r="0.8" opacity=".5" />
         </pattern>
       </defs>
-      <rect width={width} height={height} fill="#edf5f1" />
+      <rect className="map-surface" width={width} height={height} />
       <rect width={width} height={height} fill={`url(#sea-grid-${instance})`} />
-      <path d={portrait ? 'M20 280 Q60 268 100 280 M270 80 Q310 68 350 80' : 'M35 233 Q100 217 170 233 M715 48 Q785 32 855 48'}
-        fill="none" stroke="#cfdfd8" strokeWidth="2" aria-hidden="true" />
-      <g aria-hidden="true" className="map-compass" transform={`translate(${width - 36} ${height - 34})`}>
-        <path d="M0 -14 L5 6 L0 2 L-5 6 Z" fill="#70958d" />
-        <text x="0" y="-20" textAnchor="middle">N</text>
-      </g>
 
       {graph.edges.map((edge) => {
         // Normalize label orientation by ID; endpoint source order affects no layout decision.
@@ -121,7 +115,6 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
             data-current={current} data-articulation={articulation}
             aria-label={`Island ${node.id}, ${node.name}: ${state.status.toLowerCase()}${articulation ? '; articulation island' : ''}${current ? '; current' : ''}`}>
             <title>{`${node.id} · ${node.name}. ${state.status.toLowerCase()}. Discovery ${state.discovery ?? 'unset'}, low ${state.low ?? 'unset'}.${articulation ? ' Articulation island.' : ''}${current ? ' Current focus.' : ''}`}</title>
-            <ellipse cx={p.x + 1} cy={p.y + 3} rx="28" ry="20" className="island-shore" />
             <ellipse cx={p.x} cy={p.y} rx="23" ry="16" className="island-land" />
             {current && <circle key={view.eventIndex} cx={p.x} cy={p.y} r="30" className="current-node-ring" />}
             {articulation && <circle cx={p.x} cy={p.y} r="20" className="articulation-ring" />}
@@ -131,7 +124,7 @@ function MapDrawing({ view, portrait }: { view: ReplayView; portrait: boolean })
             {articulation && <g className="articulation-badge" transform={`translate(${p.x + 23} ${p.y + 16})`}>
               <rect x="-12" y="-8" width="24" height="15" rx="5" /><text textAnchor="middle" y="3">AP</text>
             </g>}
-            {current && <g className="current-badge" transform={`translate(${p.x + (portrait ? 29 : 0)} ${p.y - 28})`}>
+            {current && <g className="current-badge" transform={`translate(${portrait ? Math.min(width - 16, p.x + 37) : p.x - 30} ${portrait ? p.y - 28 : p.y + (name.y < p.y ? 18 : -18)})`}>
               <rect x="-16" y="-9" width="32" height="14" rx="5" /><text textAnchor="middle" y="1">NOW</text>
             </g>}
           </g>
@@ -153,7 +146,7 @@ export function IslandMap({ view }: { view: ReplayView }) {
           <MapDrawing view={view} portrait={false} />
           <MapDrawing view={view} portrait />
         </div>
-      ) : <div className="map-empty"><span aria-hidden="true">⌁</span><p>No map is available for this inspection.</p></div>}
+      ) : <div className="map-empty"><p>No map is available for this inspection.</p></div>}
       <ul className="map-legend" aria-label="Map legend">
         <li><span className="legend-node" aria-hidden="true" />Unvisited</li>
         <li><span className="legend-current" aria-hidden="true">›</span>Current</li>
