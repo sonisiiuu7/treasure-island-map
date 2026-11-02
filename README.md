@@ -1,6 +1,8 @@
 # Treasure-Island Bridge Safety Map
 
-A local React + TypeScript application that lets a festival volunteer inspect an island network and explain critical bridges and articulation islands using visible DFS evidence.
+A React + TypeScript application that lets a festival volunteer inspect an island network and explain critical bridges and articulation islands using visible DFS evidence.
+
+[Source repository](https://github.com/sonisiiuu7/treasure-island-map) · [Quality checks](https://github.com/sonisiiuu7/treasure-island-map/actions/workflows/quality.yml) · [Deployment record](docs/deployment.md)
 
 All five phases are complete. The interface includes the responsive native SVG map, Load/Step/Run to End/Reset controls, numerical event explanations, expandable history, traversal table, and safety summary.
 
@@ -16,7 +18,7 @@ npm.cmd ci
 npm.cmd run dev -- --host 127.0.0.1 --port 5175 --strictPort
 ```
 
-Open [the local application](http://127.0.0.1:5175/) after Vite starts. Existing installations can start with the final command. Stop the server with Ctrl+C. The verification server is stopped after the checks; this project is local and has not been published.
+Open [the local application](http://127.0.0.1:5175/) after Vite starts. Existing installations can start with the final command. Stop the server with Ctrl+C. The source is also available in the private GitHub repository linked above.
 
 Click **Load My Archipelago**, then **Step** for one recorded event or **Run to End** for completion. **Reset** restores the original unvisited network. Expand history to inspect recorded proofs. After completion, **Print summary** opens the browser print dialog for a final safety report or Save as PDF. Steps have gentle visual transitions that respect the system's reduced-motion preference.
 
@@ -60,7 +62,7 @@ Click a critical-item chip to inspect its recorded numerical proof and event num
 
 ## Automated repository checks
 
-[GitHub Actions](.github/workflows/quality.yml) runs locked installation, tests, production build, and lint on pushes, pull requests, and manual dispatch. The workflow uses Node 22 and no project secrets. Local test/build/lint checks pass. No Git remote is configured yet, so a hosted run has not been executed; it will run once this repository is pushed to GitHub.
+[GitHub Actions](.github/workflows/quality.yml) runs locked installation, tests, production build, and lint on pushes, pull requests, and manual dispatch. The workflow uses Node 22 and no project secrets. The [first hosted run](https://github.com/sonisiiuu7/treasure-island-map/actions/runs/41504434492) passed clean installation, all 337 tests in 17 files (18.36 s), production build, and lint on Ubuntu. See the [deployment record](docs/deployment.md) for publication details.
 
 ## Expected demonstration
 

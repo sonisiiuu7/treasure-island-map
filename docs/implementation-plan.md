@@ -85,3 +85,9 @@ The five-phase baseline is preserved. Additional work now exposes selectable gra
 The domain owns connectivity partitioning and immutable closure models. Application functions orchestrate closure comparison and proof queries. A graph-bound presentation hook and native controls manage exploration without changing replay actions, history, or DFS. Existing GraphAnalyzer/AnalysisService/controller contracts remain.
 
 Verification: 34 new tests; 337 total across 17 files; production build and lint pass. Browser checks cover CD/DE/D, all example outcomes, desktop/mobile/print, and 240 event layouts plus six closure layouts. GitHub Actions is configured but has not run on GitHub because no remote is set. See [exploration evidence](exploration-evidence.md).
+
+## Publication follow-up — 2026-11-03
+
+The owner authorized GitHub publication and deployment. The private repository was created as [sonisiiuu7/treasure-island-map](https://github.com/sonisiiuu7/treasure-island-map), and the complete existing history was pushed to main. The first GitHub Actions run passed clean npm ci, all 337 tests, build, and lint on Ubuntu. The earlier pending-hosted-check statements describe the local checkpoints before this publication.
+
+The owner selected My Workspace on Render. The static-site settings and deployment progress are recorded in [deployment evidence](deployment.md). Render's initial repository-access rejection requires enabling its GitHub installation for the new private repository before live verification.

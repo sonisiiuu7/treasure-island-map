@@ -58,4 +58,4 @@ The desktop CD and small-mobile closure captures were visually inspected. Covera
 
 ## CI status
 
-The quality workflow is configured for pushes, pull requests, and manual runs. Local tests/build/lint passed. No Git remote is configured and no GitHub repository was created or pushed, so hosted execution, npm ci on a clean hosted runner, and Linux behavior are not yet verified. No hosted green badge is claimed.
+At the original local checkpoint, hosted execution was pending. On 2026-11-03, the project was pushed to the private [GitHub repository](https://github.com/sonisiiuu7/treasure-island-map). The [first hosted run](https://github.com/sonisiiuu7/treasure-island-map/actions/runs/41504434492) verified clean npm ci, 337 passing tests in 17 files (18.36 s), production build, and lint on Ubuntu. The source commit was 6c0f1315c3c8a3e2e0b0a66c9dd642f6e053ab2c. See [deployment evidence](deployment.md).

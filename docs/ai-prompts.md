@@ -97,3 +97,11 @@ Critical chips now select a proof from the reached history. Selection is tied to
 Tests cover CD/DE/D, disconnected and empty-survivor cases, unknown targets, frozen values, input permutations, and agreement with Tarjan for all single removals over 75 small graphs. UI tests verify keyboard interaction, example loading, stale clearing, printing, and unchanged analysis counts. All 34 new cases and all 303 previous cases passed: 337 total.
 
 GitHub Actions is configured to install from the lockfile, run tests, build, and lint. The local equivalents passed; hosted execution is pending publication because the repository currently has no remote. See [design](exploration.md) and [actual evidence](exploration-evidence.md).
+
+## GitHub publication and deployment — 2026-11-03
+
+The owner authorized creating a GitHub repository, pushing the commits, and deploying the application. The existing Git credential manager authenticated the same account as the connected GitHub service. The source was pushed with its existing history to the new private repository, sonisiiuu7/treasure-island-map.
+
+The first hosted workflow passed on a clean Ubuntu runner: locked dependency installation, 337 tests in 17 files (18.36 s), production build, and lint. This verifies the Linux path that had remained pending at the local checkpoint.
+
+The owner selected My Workspace for Render. Creating the static site initially failed because Render could not fetch the new private repository. GitHub access for the coding agent and repository access for Render are separate connections; the owner was asked to include the repository in Render's GitHub installation. No algorithm or UI changes were needed. The [deployment record](deployment.md) tracks the settings and actual outcome.
