@@ -8,6 +8,11 @@ All five phases are complete. The interface includes the responsive native SVG m
 
 ![Completed desktop interface](docs/screenshots/exploration/completed-desktop.png)
 
+## Project report and presentation
+
+- [Project report (PDF)](docs/project-report.pdf) — the five implementation phases, requirements, technology stack, architecture, UML, algorithm proofs, AI-assisted development, and verification evidence.
+- [Interview presentation (PDF)](docs/project-presentation.pdf) — the complete 25-slide walkthrough, including UML and sequence diagrams, with corrected node and edge-label alignment on slide 2.
+
 ## Run locally
 
 In Windows PowerShell:
