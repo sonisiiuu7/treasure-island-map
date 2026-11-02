@@ -1,21 +1,24 @@
 # Treasure-Island Bridge Safety Map
 
-A local React + TypeScript application for explaining bridge and articulation-point analysis across a festival archipelago.
+A local React + TypeScript application that lets a festival volunteer inspect an island network and explain critical bridges and articulation islands using visible DFS evidence.
 
-## Current checkpoint
+All five phases are complete. The interface includes the responsive native SVG map, Load/Step/Run to End/Reset controls, numerical event explanations, expandable history, traversal table, and safety summary.
 
-Phases 1 through 4 are complete: configuration, models/data, validation, deterministic adjacency, Tarjan analysis, immutable replay events/snapshots, the pure replay reducer/selectors, and the injected React controller. The React page is the Vite starter; the interactive map and page components are scheduled for Phase 5.
+![Completed desktop interface](docs/screenshots/completed-desktop.png)
 
 ## Run locally
 
-Run these commands in this project folder using PowerShell:
+In Windows PowerShell:
 
 ```powershell
-npm.cmd install
-npm.cmd run dev
+Set-Location "C:\Users\UDAY\Documents\Codex\2026-11-02\x20\outputs\treasure-island-map"
+npm.cmd ci
+npm.cmd run dev -- --host 127.0.0.1 --port 5175 --strictPort
 ```
 
-Open the local URL printed by Vite. On a fresh checkout, use npm.cmd ci to reproduce dependency versions from package-lock.json.
+Open [the local application](http://127.0.0.1:5175/) after Vite starts. Existing installations can start with the final command. Stop the server with Ctrl+C. The verification server is stopped after the checks; this project is local and has not been published.
+
+Click **Load My Archipelago**, then **Step** for one recorded event or **Run to End** for the completed inspection. **Reset** restores the original unvisited network. Expand an entry in Inspection history to read its recorded proof.
 
 ## Verification
 
@@ -25,72 +28,42 @@ npm.cmd run build
 npm.cmd run lint
 ```
 
-Use npm.cmd test for Vitest watch mode.
+The final gate passed **293 tests in 12 files**, production build, and lint. This includes all 261 previous tests and 32 new component/application cases. Actual Chrome checks covered 1366 × 768 desktop and 390 × 844 mobile emulation, keyboard Step, the three required numerical proofs, completion, and Reset.
 
-The full gate passed: 261 tests across ten files, the TypeScript/production build, and lint without warnings. All 190 earlier cases and 71 new Phase 4 cases passed together, including hook integration under jsdom/StrictMode, exhaustive safety checks over 1,099 small graphs, and history-transition checks over 75 small graphs. See [Phase 4 evidence](docs/phase-4-evidence.md), [Phase 3 evidence](docs/phase-3-evidence.md), [Phase 2 evidence](docs/phase-2-evidence.md), and [Phase 1 evidence](docs/phase-1-evidence.md).
+See [Phase 5 evidence](docs/phase-5-evidence.md), [browser measurements](docs/browser-check-results.json), and the [interview walkthrough](docs/demo-walkthrough.md). Cross-browser, physical-phone, and screen-reader testing were not performed.
 
 ## Architecture
 
-- src/domain/models/Graph.ts: readonly Island, Bridge, and Graph definitions.
-- src/domain/models/ValidationResult.ts: structured errors and a discriminated result.
-- src/domain/validation/GraphValidator.ts: stateless validation with no React dependencies.
-- src/data/createFestivalArchipelago.ts: fresh eight-node, nine-edge demo data.
-- src/domain/models/AdjacencyIndex.ts and AnalysisResult.ts: readonly graph-index and traversal-result contracts.
-- src/domain/graph/SortedAdjacencyBuilder.ts: ASCII-sorted roots/neighbors with original edge IDs.
-- src/domain/contracts/GraphAnalyzer.ts: the small Strategy interface.
-- src/domain/algorithms/TarjanLowLinkAnalyzer.ts: stateless DFS across all components.
-- src/domain/models/ReplayEvent.ts and TraversalSnapshot.ts: discriminated event payloads and complete visible state.
-- src/domain/replay/createTraversalSnapshot.ts: independent copies and runtime freezing of every snapshot level.
-- src/application/AnalysisService.ts and LoadResult.ts: validation-first orchestration and success/failure results.
-- src/application/ReplayState.ts, replayReducer.ts, and replaySelectors.ts: lifecycle transitions and the single visible ReplayView.
-- src/presentation/hooks/useReplayController.ts: injected prepare service, useReducer, memoized view, and Load/Step/Run/Reset callbacks.
-- src/domain/graph/copyGraph.ts and domain/replay/createInitialTraversalSnapshot.ts: original graph ownership and pure startup preview creation.
-- src/tests/: validation boundaries, graph integrity, non-mutation, repeatability, and independent factory data.
+- **Domain:** readonly graph contracts, runtime validation, sorted adjacency, the GraphAnalyzer Strategy, Tarjan DFS, typed events, and deeply immutable snapshots. No React imports.
+- **Application:** AnalysisService with constructor-injected GraphAnalyzer; pure replay state, reducer, and selectors.
+- **Presentation:** App composes the service and useReplayController. IslandMap, ReplayControls, EventPanel, EventHistory, NodeTable, and SafetySummary receive the same ReplayView. EventProof formats typed recorded details.
+- **Data:** createFestivalArchipelago returns fresh original demo data. The controller captures independent original values for Reset.
+- **Tests:** Node-based domain/application tests and file-scoped jsdom React tests; independent reference fixtures remain outside production code.
 
-React, TypeScript, Vite, Tailwind, Vitest, React Testing Library, and jsdom dependencies are installed. Domain/application tests keep the Node environment; the controller test file opts into jsdom. Map component tests and the manual browser demonstration are Phase 5.
+Only Load calls AnalysisService.prepare and executes DFS. Navigation, Reset, rerenders, and history expansion use the prepared immutable history. Panels read only the selected snapshot and already-replayed events; future classifications are never exposed early.
 
-## Validation boundary
+The stack is React, TypeScript, Vite, Tailwind CSS, native SVG, React useReducer, Vitest, React Testing Library, jsdom, and Oxlint. Phase 5 adds no dependencies or external services.
 
-validateGraph(input: unknown) accepts runtime data. Success has valid: true, an empty errors array, and a typed graph. Failure has valid: false and structured errors with code, message, field path, and relevant node/edge/endpoint IDs. A failure never exposes a graph for analysis.
+## Expected demonstration
 
-The validator returns successful input by reference and does not mutate, clone, freeze, or cache it. Replay initialization now captures an independent frozen original graph and preview; successful loads capture independently owned graph values before queued actions. Reset reuses the saved original and clears progress/history/errors without analysis.
+The original eight-island network produces 54 deterministic events:
 
-The engine limits apply: 1..12 nodes and 0..20 undirected edges. Disconnected graphs and isolated nodes are valid. Node and edge ID uniqueness are checked within their respective collections.
+- Event 21: returning F → E changes low[E] from 4 to 3.
+- Event 39: DE is not a bridge because 3 > 3 is false.
+- Event 40: D becomes an articulation island because 3 ≥ 3 is true.
+- Completion: bridges **CD, EG, GH**; articulation islands **C, D, E, G**; **1** component.
 
-## Interview documentation
+These numbers are calculated by the analyzer. The hand-derived expected table exists only in documentation/tests.
 
-- [Five-phase implementation plan](docs/implementation-plan.md)
-- [Independent reference graph and DFS oracle](docs/reference-graph.md)
+The engine accepts 1..12 nodes and 0..20 undirected edges, including disconnected graphs and isolated nodes. Validation errors identify their fields/items and clear all earlier visible analysis. The volunteer interface loads the original demo; dependency-injected tests exercise invalid input without adding testing controls to the page.
+
+## Project documentation
+
+- [Implementation plan and phase gates](docs/implementation-plan.md)
 - [Architecture, UML, and sequences](docs/design.md)
-- [Actual requests and implementation brief](docs/ai-prompts.md)
-- [Phase 1 verification evidence](docs/phase-1-evidence.md)
-- [Phase 2 implementation and SOLID boundaries](docs/phase-2-design.md)
-- [Phase 2 verification evidence](docs/phase-2-evidence.md)
-- [Event payloads, ordering, snapshots, and examples](docs/event-schema.md)
-- [Phase 3 verification evidence](docs/phase-3-evidence.md)
-- [Replay state, selectors, and controller contract](docs/replay-controller.md)
-- [Phase 4 verification evidence](docs/phase-4-evidence.md)
-
-Expected DFS values remain in documentation/tests only. Production analysis calculates discovery/low values, component count, bridges, and articulations from graph input.
-
-## Using the analysis service
-
-```ts
-import { AnalysisService } from './src/application/AnalysisService'
-import { createFestivalArchipelago } from './src/data/createFestivalArchipelago'
-import { TarjanLowLinkAnalyzer } from './src/domain/algorithms/TarjanLowLinkAnalyzer'
-
-const service = new AnalysisService(new TarjanLowLinkAnalyzer())
-const load = service.prepare(createFestivalArchipelago())
-if (load.ok) {
-  // load.result.nodes contains parent/discovery/low for every island.
-  // load.result.bridgeIds is ['CD', 'EG', 'GH'] for the original demo.
-  // load.result.articulationIds is ['C', 'D', 'E', 'G'].
-} else {
-  // load.errors identifies invalid graph fields; no partial result is returned.
-}
-```
-
-The prepared result also exposes initialSnapshot, events, and finalSnapshot. The original graph produces 54 deterministic events. finalSnapshot references the last event's snapshot; every event and snapshot is frozen. See event-schema.md for the numerical explanation of F -> E and the DE/D equality boundary.
-
-The controller now exposes load(), load(input), step(), runToEnd(), reset(), and one view. Load invokes AnalysisService; navigation/reset/rerender do not rerun DFS. Selectors expose only the chosen snapshot and already-replayed history. Map rendering, page controls, and component integration remain Phase 5.
+- [Independent graph/reference table](docs/reference-graph.md)
+- [Event schema and emission rules](docs/event-schema.md)
+- [Replay/controller contract](docs/replay-controller.md)
+- [Presentation design and accessibility](docs/ui-design.md)
+- [Actual AI requests and development record](docs/ai-prompts.md)
+- [Phase 1 evidence](docs/phase-1-evidence.md), [Phase 2 evidence](docs/phase-2-evidence.md), [Phase 3 evidence](docs/phase-3-evidence.md), [Phase 4 evidence](docs/phase-4-evidence.md), [Phase 5 evidence](docs/phase-5-evidence.md)

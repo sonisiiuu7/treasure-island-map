@@ -1,0 +1,236 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.74",
+    "revision": "@d331de35ca8ab1358c7a17e4bd41627d55eaef51",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.25"
+  },
+  "url": "http://127.0.0.1:5175/",
+  "keyboardStep": "COMPONENT_START",
+  "proofs": {
+    "returnFE": {
+      "type": "RETURN_CHILD",
+      "node": "E",
+      "edge": "EF",
+      "related": "F",
+      "index": 20,
+      "text": "Current inspection event\n21\nReturn from a child\nLow update · E\n4 → 3\nlow[E] = min(4, low[F] = 3) = 3\n\nReturn F -> E: low[E] = min(4, low[F] = 3) = 3 (4 -> 3)."
+    },
+    "classifyDE": {
+      "type": "CLASSIFY_EDGE",
+      "node": "D",
+      "edge": "DE",
+      "related": "E",
+      "index": 38,
+      "text": "Current inspection event\n39\nCheck a bridge\nNot a bridge · DE\n3 > 3 = false\nlow[E] > discovery[D]\n\nClassify DE: low[E] = 3 > discovery[D] = 3 is false; not a bridge. Non-root articulation test: 3 >= 3 is true."
+    },
+    "articulationD": {
+      "type": "ARTICULATION",
+      "node": "D",
+      "edge": "DE",
+      "related": "E",
+      "index": 39,
+      "text": "Current inspection event\n40\nMark an articulation island\nArticulation island · D\n3 ≥ 3 = true\nlow[E] ≥ discovery[D]\n\nMark non-root D as articulation: low[E] = 3 >= discovery[D] = 3 is true."
+    }
+  },
+  "final": {
+    "bridges": [
+      "CD",
+      "EG",
+      "GH"
+    ],
+    "articulations": [
+      "C",
+      "D",
+      "E",
+      "G"
+    ],
+    "components": "1",
+    "history": 54,
+    "table": [
+      [
+        "A",
+        "Anchor Bay",
+        "—",
+        "0",
+        "0",
+        "Finished"
+      ],
+      [
+        "B",
+        "Buccaneer Bites",
+        "A",
+        "1",
+        "0",
+        "Finished"
+      ],
+      [
+        "C",
+        "Coral Stage",
+        "B",
+        "2",
+        "0",
+        "Finished"
+      ],
+      [
+        "D",
+        "Driftwood Dock",
+        "C",
+        "3",
+        "3",
+        "Finished"
+      ],
+      [
+        "E",
+        "Ember Market",
+        "D",
+        "4",
+        "3",
+        "Finished"
+      ],
+      [
+        "F",
+        "First Aid",
+        "E",
+        "5",
+        "3",
+        "Finished"
+      ],
+      [
+        "G",
+        "Games Grove",
+        "E",
+        "6",
+        "6",
+        "Finished"
+      ],
+      [
+        "H",
+        "Harmony Isle",
+        "G",
+        "7",
+        "7",
+        "Finished"
+      ]
+    ],
+    "summary": "Safety findings\nFinal\nComponents\n1\nCritical bridges\nCD\nEG\nGH\nArticulation islands\nC\nD\nE\nG\nTHE REASON, IN NUMBERS\nCritical bridge · CD\n3 > 2 = true\nlow[D] > discovery[C]\n\nRemoving CD disconnects its branch from the rest of the network."
+  },
+  "desktop": {
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "documentWidth": 1351,
+    "title": "Treasure-Island Bridge Safety Map",
+    "status": "COMPLETED",
+    "panels": [
+      {
+        "name": "Your archipelago",
+        "top": 163,
+        "bottom": 501
+      },
+      {
+        "name": "Island inspection values",
+        "top": 514,
+        "bottom": 758
+      },
+      {
+        "name": "Current inspection event",
+        "top": 163,
+        "bottom": 377
+      },
+      {
+        "name": "Safety findings",
+        "top": 390,
+        "bottom": 651
+      },
+      {
+        "name": "Inspection history",
+        "top": 664,
+        "bottom": 847
+      }
+    ],
+    "labelOverflow": [],
+    "nameLabelOverlaps": [],
+    "bridgeBadgeOverlaps": []
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "documentWidth": 390,
+    "title": "Treasure-Island Bridge Safety Map",
+    "status": "COMPLETED",
+    "panels": [
+      {
+        "name": "Your archipelago",
+        "top": 275,
+        "bottom": 873
+      },
+      {
+        "name": "Island inspection values",
+        "top": 1393,
+        "bottom": 1664
+      },
+      {
+        "name": "Current inspection event",
+        "top": 887,
+        "bottom": 1103
+      },
+      {
+        "name": "Safety findings",
+        "top": 1117,
+        "bottom": 1379
+      },
+      {
+        "name": "Inspection history",
+        "top": 1678,
+        "bottom": 1951
+      }
+    ],
+    "labelOverflow": [],
+    "nameLabelOverlaps": [],
+    "bridgeBadgeOverlaps": []
+  },
+  "reset": {
+    "status": "EMPTY",
+    "history": 0,
+    "values": [
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ],
+      [
+        "—",
+        "—"
+      ]
+    ]
+  },
+  "errors": []
+}

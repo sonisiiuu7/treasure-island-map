@@ -8,7 +8,7 @@ Follow the agreed five-phase baseline. Implement, test, verify, and record each 
 | 2 | Sorted adjacency, GraphAnalyzer, AnalysisService, Tarjan DFS | Main oracle, shuffled arrays, cycles, low propagation, inequalities, root count, components/isolated nodes | Complete: 58 new tests; 149 total passed |
 | 3 | Explanatory events and immutable snapshots | Event order, numerical proof, snapshot independence, identical repeated histories | Complete: 41 new tests; 190 total passed |
 | 4 | Replay reducer, selectors, controller hook | One event per Step, Run to End, Reset, final clamp, invalid-load stale-output clearing | Complete: 71 new tests; 261 total passed |
-| 5 | SVG map, controls, event/history panel, table, summary | Synchronized UI, accessible states, component tests, regression suite, build, manual demo | Planned |
+| 5 | SVG map, controls, event/history panel, table, summary | Synchronized UI, accessible states, component tests, regression suite, build, browser demo | Complete: 32 new tests; 293 total passed |
 
 ## Phase 1 order
 
@@ -50,8 +50,18 @@ All 41 new cases passed, including every history transition across all 75 simple
 
 All 49 reducer/selector cases and 22 controller cases passed. All 261 tests passed together, with successful build and lint. StrictMode, batched actions, two invalid-load clearing cases, caller mutation, custom graph Reset, and identical stepped/complete histories are verified. See replay-controller.md and phase-4-evidence.md.
 
-## Remaining integration checks
+## Phase 5 implementation and verification
 
 Phase 4 now proves LOAD_FAILURE clears earlier graph/result/cursor state atomically and exposes no stale graph, snapshot, event, focus, history, or progress. Reset restores the independently owned original values after custom/invalid loads.
 
-Phase 5 will render the SVG map, page controls, table, proof/event history, and summary from the same ReplayView, then add component integration and the manual browser demonstration.
+Phase 5 now renders the native SVG map, controls, current proof, expandable history, node table, and summary from the same ReplayView.
+
+1. Compose the existing service/controller at App without changing domain/application/controller behavior.
+2. Add accessible components and numerical formatting of recorded event details.
+3. Add 22 component and 10 complete application cases, including all 54 selected snapshots and two distinct invalid-load recoveries.
+4. Verify the actual browser at laptop/mobile sizes; correct table height and text collisions; retain screenshots and measurements.
+5. Run focused UI checks, all 293 tests, production build, lint, and Git whitespace checks; record the local checkpoint.
+
+All 32 new cases and all 261 earlier cases passed. Build/lint passed. Chrome checked the required F → E, DE, and D proofs, final values, history retention, keyboard Step, and Reset. Desktop primary panels fit at 1366 × 768; mobile at 390 × 844 has no horizontal overflow. See phase-5-evidence.md, ui-design.md, and demo-walkthrough.md.
+
+All five planned implementation phases are complete. GitHub publication and deployment were not part of this local phase.

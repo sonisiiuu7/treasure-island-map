@@ -74,3 +74,23 @@ The implementation kept lifecycle state, reducer, and selectors in the applicati
 Graph copies protect original/reset data and capture successful values before React queues an action. One immutable ReplayView exposes only the selected snapshot and replayed history. StrictMode does not trigger analysis; only explicit load calls do.
 
 The application gate passed 49 new tests, followed by 22 hook tests using file-scoped jsdom. All 261 tests passed together; build and lint passed without warnings. There were no implementation/test failures during this phase. The actual invalid-coordinate and duplicate-ID recovery checks, batched updates, and repeatability evidence are in [phase-4-evidence.md](phase-4-evidence.md).
+
+## Phase 5 request and implementation
+
+The actual request began:
+
+> Complete Phase 5 of my Treasure-Island Bridge Safety Map project.
+
+The complete submitted text is preserved in [prompts/phase-5-request.md](prompts/phase-5-request.md). This is the user's supplied implementation request, not a reconstructed prompt.
+
+The implementation preserved the domain, application, and existing controller sources. App now composes the injected service/controller and passes one ReplayView to the native SVG map, controls, current event, expandable history, table, and safety summary. EventProof formats recorded typed values and outcomes without calculating traversal classifications.
+
+The local-development guidance in the Sites skill was used for preview/check/teardown only. Work remained in the existing checkout; nothing was registered, uploaded, or published. No separate AI coding session or delegated implementation is claimed.
+
+Twenty-two component cases and ten application cases were added. Existing test assertions were retained. The application test traverses all 54 events and compares every visible table row, edge state, current focus, findings, and history boundary against the selected snapshot. Two invalid-load scenarios use injected real validation failures after completion and verify stale output clearing followed by recovery.
+
+Focused UI tests caught accessible-name issues in the SVG description and page heading; both were fixed. Browser review caught table height and map text collisions. Compact spacing, responsive coordinate projection, name placement, and bridge-label offsets were refined, then actual screenshots and geometry measurements were refreshed.
+
+The local browser was driven with Chrome DevTools using Node's built-in WebSocket, without adding dependencies. A disposable headless profile was used after the default browser configuration failed in the restricted execution environment. Real browser Space input advanced Step. The recorded proofs show F → E at event 21, DE at 39, and D at 40; completion shows all expected final values and retains all 54 entries.
+
+The final checks passed: 32 focused UI tests, 293 complete tests, production build, and lint. Desktop/mobile browser captures and machine-readable results are saved in [Phase 5 evidence](phase-5-evidence.md). Browser scope is Chrome plus viewport emulation, with error recovery tested in React integration. The [walkthrough](demo-walkthrough.md) explains local startup, the interview demonstration, architectural boundaries, and the AI assistance record.

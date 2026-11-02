@@ -1,6 +1,6 @@
 # Treasure-Island Bridge Safety Map: UML and sequence design
 
-Implementation status: Phases 1 through 4 are complete. AnalysisResult preserves the calculated values and immutable replay envelope. Pure application replay state/selectors and the injected React hook are implemented; analyzer/service boundaries are unchanged. Page/map components remain Phase 5. See event-schema.md, replay-controller.md, and phase-4-evidence.md.
+Implementation status: all five phases are complete. AnalysisResult preserves calculated values and the immutable replay envelope. The pure replay state/selectors, injected controller, and complete native SVG/React interface are implemented; analyzer/service boundaries are unchanged. All panels consume one ReplayView. See event-schema.md, replay-controller.md, ui-design.md, and phase-5-evidence.md.
 
 This design follows the finalized interview plan: React + TypeScript + Vite, Tailwind CSS, native SVG, React useReducer, Vitest, and React Testing Library. Calculation and replay are local.
 
@@ -18,7 +18,7 @@ flowchart TB
 
     subgraph Presentation["Presentation: React and native SVG"]
         Controller["useReplayController<br/>load / step / runToEnd / reset"]
-        Panels["IslandMap / ReplayControls / EventPanel<br/>NodeTable / SafetySummary"]
+        Panels["IslandMap / ReplayControls / EventPanel<br/>EventHistory / NodeTable / SafetySummary"]
     end
 
     subgraph Application["Application: orchestration and replay"]
@@ -458,4 +458,4 @@ The DFS itself is O(V+E). Sorting adjacency and copying complete per-event snaps
 - sequence-load.mmd
 - sequence-replay.mmd
 
-Use the same source diagrams for documentation and interview explanations. No application implementation is included in this design package.
+The editable diagrams match the implemented boundaries. The concrete presentation components and accessibility/layout decisions are documented in ui-design.md; the completed application and actual checks are recorded in phase-5-evidence.md.

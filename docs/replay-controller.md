@@ -1,6 +1,6 @@
 # Replay state, selectors, and controller
 
-Phase 4 implements Load, Step, Run to End, and Reset over the immutable history prepared in Phase 3. The rendered map, buttons, and panels remain Phase 5.
+Phase 4 implements Load, Step, Run to End, and Reset over the immutable history prepared in Phase 3. Phase 5 now renders the map, buttons, and panels from the selected ReplayView without changes to this controller contract.
 
 ## Responsibilities and dependencies
 
@@ -98,8 +98,8 @@ Unexpected exceptions from prepare propagate without committing a new replay sta
 
 StrictMode may repeat pure initializer/reducer work. Copies/freezes affect only newly owned data. There is no mount effect that triggers analysis, so an explicit Load still invokes analysis once.
 
-Future UI handlers should explicitly call load() for the original demo, rather than forward a click event as graph input. All map/table/event/summary panels should consume controller.view.
+ReplayControls explicitly calls load() for the original demo, so the click event is never forwarded as graph input. Every map/table/event/history/summary component consumes the same controller.view.
 
-The hook tests use React Testing Library with a file-scoped jsdom annotation. The global test environment remains Node for domain/application tests. No map or page-component implementation is part of this checkpoint.
+The hook and Phase 5 presentation tests use React Testing Library with file-scoped jsdom annotations. The global test environment remains Node for domain/application tests.
 
-See phase-4-evidence.md for actual checks and reset/invalid-load demonstrations.
+See phase-4-evidence.md for the controller checks and reset/invalid-load demonstrations. Phase-5-evidence.md adds complete UI synchronization, browser captures, and invalid-load DOM clearing/recovery.
